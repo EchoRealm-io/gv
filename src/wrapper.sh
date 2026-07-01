@@ -1,11 +1,12 @@
 #!/bin/bash
 # Smart Go wrapper - automatically selects version based on go.mod
 
-MIN_GO_VERSION="${MIN_GO_VERSION:-1.17}"
+MIN_GO_VERSION="${MIN_GO_VERSION:-1.21}"
 DEFAULT_GO_VERSION="${DEFAULT_GO_VERSION:-1.26.4}"
-GO_VERSIONS_DIR="${GO_VERSIONS_DIR:-/usr/local}"
 if [[ "$OSTYPE" == *"msys"* || "$OSTYPE" == *"cygwin"* ]]; then
     GO_VERSIONS_DIR="${GO_VERSIONS_DIR:-$HOME/.go-versions}"
+else
+    GO_VERSIONS_DIR="${GO_VERSIONS_DIR:-/usr/local}"
 fi
 
 find_go_version() {
@@ -60,7 +61,8 @@ if [[ -n "$version" ]]; then
 
     go_dir="$GO_VERSIONS_DIR/go$version"
     if [[ ! -d "$go_dir" || ! -x "$go_dir/bin/go" ]]; then
-        go_dir=$(find_installed_version "$version")
+        major_ver=$(echo "$version" | cut -d. -f1,2)
+        go_dir=$(find_installed_version "$major_ver")
     fi
 
     if [[ -n "$go_dir" && -x "$go_dir/bin/go" ]]; then

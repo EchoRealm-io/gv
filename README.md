@@ -41,7 +41,7 @@ You can customize settings by editing `~/.go-version-manager/defaults.sh` or by 
 | `GO_VERSIONS_DIR` | `/usr/local` | `$HOME/.go-versions` | Installation root |
 | `GO_DOWNLOAD_BASE_URL` | `https://go.dev/dl` (auto: `golang.google.cn` in China) | same | Download mirror |
 | `DEFAULT_GO_VERSION` | `1.26.4` | same | Fallback version when no `go.mod` |
-| `MIN_GO_VERSION` | `1.17` | same | Auto‑upgrade versions below this |
+| `MIN_GO_VERSION` | `1.21` | same | Auto‑upgrade versions below this |
 
 ## Uninstall
 

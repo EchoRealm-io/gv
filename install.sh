@@ -51,13 +51,13 @@ default_default_version="1.26.4"
 read -p "Default Go version (when no go.mod, default: $default_default_version): " user_default_version
 user_default_version=${user_default_version:-$default_default_version}
 
-default_min_version="1.17"
+default_min_version="1.21"
 read -p "Minimum Go version (auto-upgrade below this, default: $default_min_version): " user_min_version
 user_min_version=${user_min_version:-$default_min_version}
 
 # Detect region-appropriate default mirror
 detect_region_mirror() {
-    local lang="${LANG:-$LC_ALL}"
+    local lang="${LC_ALL:-$LANG}"
     case "$lang" in
         zh_CN*) echo "https://golang.google.cn/dl" ;;
         *)      echo "https://go.dev/dl" ;;

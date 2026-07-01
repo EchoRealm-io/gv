@@ -110,18 +110,21 @@ switch_go_version() {
 
     export GOROOT="$target_dir"
     # Remove any old Go paths from PATH, then prepend new bin
-    export PATH="$GOROOT/bin:$(echo $PATH | tr ':' '\n' | grep -v "$GO_VERSIONS_DIR/go" | tr '\n' ':' | sed 's/:$//')"
+    export PATH="$GOROOT/bin:$(echo "$PATH" | tr ':' '\n' | grep -v "^$GO_VERSIONS_DIR/go" | tr '\n' ':' | sed 's/:$//')"
     echo "$version" > "$GO_CURRENT_VERSION_FILE"
     msg switch_success "$version"
     go version
 }
 
 # ---------- Auto-load the last used version on shell startup ----------
-if [[ -f "$GO_CURRENT_VERSION_FILE" ]]; then
-    current_version=$(cat "$GO_CURRENT_VERSION_FILE")
-    target_dir="$GO_VERSIONS_DIR/go$current_version"
-    if [[ -d "$target_dir" ]]; then
-        export GOROOT="$target_dir"
-        export PATH="$GOROOT/bin:$(echo $PATH | tr ':' '\n' | grep -v "$GO_VERSIONS_DIR/go" | tr '\n' ':' | sed 's/:$//')"
+_auto_load_go_version() {
+    if [[ -f "$GO_CURRENT_VERSION_FILE" ]]; then
+        local current_version=$(cat "$GO_CURRENT_VERSION_FILE")
+        local target_dir="$GO_VERSIONS_DIR/go$current_version"
+        if [[ -d "$target_dir" ]]; then
+            export GOROOT="$target_dir"
+            export PATH="$GOROOT/bin:$(echo "$PATH" | tr ':' '\n' | grep -v "^$GO_VERSIONS_DIR/go" | tr '\n' ':' | sed 's/:$//')"
+        fi
     fi
-fi
+}
+_auto_load_go_version

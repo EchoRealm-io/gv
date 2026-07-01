@@ -41,7 +41,7 @@ curl -sSL https://raw.githubusercontent.com/EchoRealm-io/gv/main/install.sh | ba
 | `GO_VERSIONS_DIR` | `/usr/local` | `$HOME/.go-versions` | 安装根目录 |
 | `GO_DOWNLOAD_BASE_URL` | `https://go.dev/dl`（中国自动使用 `golang.google.cn`） | 同上 | 下载镜像地址 |
 | `DEFAULT_GO_VERSION` | `1.26.4` | 同上 | 无 `go.mod` 时的默认版本 |
-| `MIN_GO_VERSION` | `1.17` | 同上 | 低于此版本自动升级 |
+| `MIN_GO_VERSION` | `1.21` | 同上 | 低于此版本自动升级 |
 
 ## 卸载
 

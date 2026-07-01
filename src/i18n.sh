@@ -2,7 +2,7 @@
 # ==================== Internationalization (i18n) ====================
 
 detect_lang() {
-    local lang="${LANG:-$LC_ALL}"
+    local lang="${LC_ALL:-$LANG}"
     lang="${lang%.*}"
     case "$lang" in
         zh_CN*) echo "zh_CN" ;;
