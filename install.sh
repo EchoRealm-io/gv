@@ -52,7 +52,15 @@ default_min_version="1.17"
 read -p "Minimum Go version (auto-upgrade below this, default: $default_min_version): " user_min_version
 user_min_version=${user_min_version:-$default_min_version}
 
-default_mirror="https://golang.google.cn/dl"
+# Detect region-appropriate default mirror
+detect_region_mirror() {
+    local lang="${LANG:-$LC_ALL}"
+    case "$lang" in
+        zh_CN*) echo "https://golang.google.cn/dl" ;;
+        *)      echo "https://go.dev/dl" ;;
+    esac
+}
+default_mirror=$(detect_region_mirror)
 read -p "Download mirror URL (default: $default_mirror): " user_mirror
 user_mirror=${user_mirror:-$default_mirror}
 

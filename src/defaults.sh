@@ -5,7 +5,15 @@
 
 export GO_VERSIONS_DIR="${GO_VERSIONS_DIR:-/usr/local}"
 export GO_CURRENT_VERSION_FILE="$HOME/.go_current_version"
-export GO_DOWNLOAD_BASE_URL="${GO_DOWNLOAD_BASE_URL:-https://golang.google.cn/dl}"
+# Detect region-appropriate default mirror
+detect_region_mirror() {
+    local lang="${LANG:-$LC_ALL}"
+    case "$lang" in
+        zh_CN*) echo "https://golang.google.cn/dl" ;;
+        *)      echo "https://go.dev/dl" ;;
+    esac
+}
+export GO_DOWNLOAD_BASE_URL="${GO_DOWNLOAD_BASE_URL:-$(detect_region_mirror)}"
 export DEFAULT_GO_VERSION="${DEFAULT_GO_VERSION:-1.26.4}"
 export MIN_GO_VERSION="${MIN_GO_VERSION:-1.17}"
 

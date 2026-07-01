@@ -10,7 +10,7 @@ Automatically switches Go version based on `go.mod` – ideal for multi-project,
 - 📦 **Multi‑version共存** – each version installed independently
 - 🐧 **Cross‑platform** – Linux, macOS, Windows (Git Bash / WSL)
 - 🌏 **Multi‑language UI** – auto‑detects system language (Simplified/Traditional Chinese, English, Japanese, Korean)
-- 🇨🇳 **Mirror support** – defaults to `golang.google.cn`, easily changeable
+- 🌍 **Region‑aware mirror** – auto-selects `golang.google.cn` for China, `go.dev` for other regions; easily changeable via `go-set-mirror`
 
 ## Quick Install
 
@@ -38,7 +38,7 @@ You can customize settings by editing `~/.go-version-manager/defaults.sh` or by 
 | Variable | Default (Linux/macOS) | Default (Windows) | Description |
 |----------|-----------------------|-------------------|-------------|
 | `GO_VERSIONS_DIR` | `/usr/local` | `$HOME/.go-versions` | Installation root |
-| `GO_DOWNLOAD_BASE_URL` | `https://golang.google.cn/dl` | same | Download mirror |
+| `GO_DOWNLOAD_BASE_URL` | `https://go.dev/dl` (auto: `golang.google.cn` in China) | same | Download mirror |
 | `DEFAULT_GO_VERSION` | `1.26.4` | same | Fallback version when no `go.mod` |
 | `MIN_GO_VERSION` | `1.17` | same | Auto‑upgrade versions below this |
 
