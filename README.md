@@ -1,13 +1,14 @@
 # gv - Go Version Manager
 
-A lightweight, zero-dependency Go version manager for **Linux, macOS, and Windows (Git Bash/WSL)**.  
-Automatically switches Go version based on `go.mod` – ideal for multi-project, multi-version development.
+**gv** (short for **G**o **V**ersion) is a lightweight, zero-dependency Go version manager for **Linux, macOS, and Windows (Git Bash/WSL)**.  
+Automatically switches Go version based on `go.mod`, or manually via `switch_go_version` – ideal for multi-project, multi-version development.
 
 ## Features
 
 - 🚀 **One‑line install** – fully automated setup
 - 🔄 **Smart switching** – automatically uses the version declared in `go.mod` when you `cd` into a project
-- 📦 **Multi‑version共存** – each version installed independently
+- 🎛️ **Manual override** – switch to any installed version on demand with `switch_go_version`
+- 📦 **Multi‑version support** – each version installed independently
 - 🐧 **Cross‑platform** – Linux, macOS, Windows (Git Bash / WSL)
 - 🌏 **Multi‑language UI** – auto‑detects system language (Simplified/Traditional Chinese, English, Japanese, Korean)
 - 🌍 **Region‑aware mirror** – auto-selects `golang.google.cn` for China, `go.dev` for other regions; easily changeable via `go-set-mirror`
