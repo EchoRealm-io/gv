@@ -18,7 +18,7 @@
 打开终端（Windows 上使用 Git Bash 或 WSL），运行：
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/your-username/gv/main/install.sh | bash
+curl -sSL https://raw.githubusercontent.com/EchoRealm-io/gv/main/install.sh | bash
 ```
 
 安装完成后，**重启终端**或执行 `source ~/.bashrc`（Linux/macOS）或 `source ~/.bash_profile` 使配置生效。

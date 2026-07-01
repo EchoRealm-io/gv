@@ -25,8 +25,11 @@ detect_rc_file() {
 INSTALL_DIR="$HOME/.go-version-manager"
 mkdir -p "$INSTALL_DIR"
 
-# Copy source files
-cp -r src/* "$INSTALL_DIR/"
+# Download source files from GitHub
+BASE_URL="https://raw.githubusercontent.com/EchoRealm-io/gv/main/src"
+curl -sSL "$BASE_URL/i18n.sh" -o "$INSTALL_DIR/i18n.sh"
+curl -sSL "$BASE_URL/core.sh" -o "$INSTALL_DIR/core.sh"
+curl -sSL "$BASE_URL/wrapper.sh" -o "$INSTALL_DIR/wrapper.sh"
 
 echo "=== gv (Go Version Manager) Installation ==="
 echo "Press Enter to accept default values."

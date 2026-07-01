@@ -1,8 +1,8 @@
 #!/bin/bash
 # Smart Go wrapper - automatically selects version based on go.mod
 
-MIN_VERSION="${MIN_VERSION:-1.17}"
-DEFAULT_VERSION="${DEFAULT_VERSION:-1.26.4}"
+MIN_GO_VERSION="${MIN_GO_VERSION:-1.17}"
+DEFAULT_GO_VERSION="${DEFAULT_GO_VERSION:-1.26.4}"
 GO_VERSIONS_DIR="${GO_VERSIONS_DIR:-/usr/local}"
 if [[ "$OSTYPE" == *"msys"* || "$OSTYPE" == *"cygwin"* ]]; then
     GO_VERSIONS_DIR="${GO_VERSIONS_DIR:-$HOME/.go-versions}"
@@ -25,7 +25,7 @@ find_go_version() {
 
 version_lt_min() {
     local ver="$1"
-    local min="$MIN_VERSION"
+    local min="$MIN_GO_VERSION"
     local v_major=$(echo "$ver" | cut -d. -f1)
     local v_minor=$(echo "$ver" | cut -d. -f2)
     local m_major=$(echo "$min" | cut -d. -f1)
@@ -54,8 +54,8 @@ version=$(find_go_version)
 
 if [[ -n "$version" ]]; then
     if version_lt_min "$version"; then
-        echo "⚠️  go.mod version $version < $MIN_VERSION, auto-upgrading to $MIN_VERSION" >&2
-        version="$MIN_VERSION"
+        echo "⚠️  go.mod version $version < $MIN_GO_VERSION, auto-upgrading to $MIN_GO_VERSION" >&2
+        version="$MIN_GO_VERSION"
     fi
 
     go_dir="$GO_VERSIONS_DIR/go$version"
@@ -68,10 +68,10 @@ if [[ -n "$version" ]]; then
         exec "$go_dir/bin/go" "$@"
     else
         echo "❌ Version $version not installed, run go-install $version" >&2
-        default_go="$GO_VERSIONS_DIR/go$DEFAULT_VERSION/bin/go"
+        default_go="$GO_VERSIONS_DIR/go$DEFAULT_GO_VERSION/bin/go"
         if [[ -x "$default_go" ]]; then
-            echo "⚠️  Falling back to default $DEFAULT_VERSION" >&2
-            export GOROOT="$GO_VERSIONS_DIR/go$DEFAULT_VERSION"
+            echo "⚠️  Falling back to default $DEFAULT_GO_VERSION" >&2
+            export GOROOT="$GO_VERSIONS_DIR/go$DEFAULT_GO_VERSION"
             exec "$default_go" "$@"
         else
             echo "❌ No usable Go found" >&2
@@ -79,9 +79,9 @@ if [[ -n "$version" ]]; then
         fi
     fi
 else
-    default_go="$GO_VERSIONS_DIR/go$DEFAULT_VERSION/bin/go"
+    default_go="$GO_VERSIONS_DIR/go$DEFAULT_GO_VERSION/bin/go"
     if [[ -x "$default_go" ]]; then
-        export GOROOT="$GO_VERSIONS_DIR/go$DEFAULT_VERSION"
+        export GOROOT="$GO_VERSIONS_DIR/go$DEFAULT_GO_VERSION"
         exec "$default_go" "$@"
     else
         echo "❌ No default Go installation" >&2

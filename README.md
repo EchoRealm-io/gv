@@ -18,7 +18,7 @@ Automatically switches Go version based on `go.mod`, or manually via `switch_go_
 Open your terminal (Git Bash or WSL on Windows) and run:
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/your-username/gv/main/install.sh | bash
+curl -sSL https://raw.githubusercontent.com/EchoRealm-io/gv/main/install.sh | bash
 ```
 
 After installation, **restart your terminal** or run `source ~/.bashrc` (Linux/macOS) or `source ~/.bash_profile` to apply.
