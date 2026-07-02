@@ -3,7 +3,11 @@
 # This file is overwritten by install.sh with user-specified values.
 # You can also edit it manually after installation (~/.go-version-manager/defaults.sh).
 
-export GO_VERSIONS_DIR="${GO_VERSIONS_DIR:-/usr/local}"
+if [[ "$OSTYPE" == *"msys"* || "$OSTYPE" == *"cygwin"* ]]; then
+    export GO_VERSIONS_DIR="${GO_VERSIONS_DIR:-$HOME/.go-versions}"
+else
+    export GO_VERSIONS_DIR="${GO_VERSIONS_DIR:-/usr/local}"
+fi
 export GO_CURRENT_VERSION_FILE="$HOME/.go_current_version"
 # Detect region-appropriate default mirror
 detect_region_mirror() {

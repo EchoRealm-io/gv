@@ -46,9 +46,6 @@ go-install() {
 
     # Build package name based on OS and architecture
     local os_name="$GO_OS"
-    [[ "$os_name" == "windows" ]] && os_name="windows"
-    [[ "$os_name" == "darwin" ]] && os_name="darwin"
-    [[ "$os_name" == "linux" ]] && os_name="linux"
     local pkg_name="go$version.$os_name-$GO_ARCH$GO_PKG_EXT"
     local download_url="$GO_DOWNLOAD_BASE_URL/$pkg_name"
 
@@ -56,14 +53,20 @@ go-install() {
 
     local tmp_file="/tmp/$pkg_name"
     curl -L "$download_url" -o "$tmp_file" || {
+        rm -f "$tmp_file"
         msg download_fail
         return 1
     }
 
     # Extract to target directory (may require sudo)
     if [[ "$GO_OS" == "windows" ]]; then
+        local tmp_extract="/tmp/go_extract_$$"
+        mkdir -p "$tmp_extract"
+        (cd "$tmp_extract" && $GO_UNPACK_CMD "$tmp_file")
         mkdir -p "$target_dir"
-        (cd "$target_dir" && $GO_UNPACK_CMD "$tmp_file")
+        mv "$tmp_extract"/go/* "$target_dir/" 2>/dev/null || mv "$tmp_extract"/* "$target_dir/"
+        rm -rf "$tmp_extract"
+        # Re-check: if go/ was stripped and we got the tree directly, we're done
     else
         echo "$(msg extract_sudo "$target_dir")"
         sudo mkdir -p "$target_dir"
@@ -110,7 +113,7 @@ switch_go_version() {
 
     export GOROOT="$target_dir"
     # Remove any old Go paths from PATH, then prepend new bin
-    export PATH="$GOROOT/bin:$(echo "$PATH" | tr ':' '\n' | grep -v "^$GO_VERSIONS_DIR/go" | tr '\n' ':' | sed 's/:$//')"
+    export PATH="$GOROOT/bin:$(echo "$PATH" | tr ':' '\n' | grep -v "^$GO_VERSIONS_DIR/go[0-9]" | tr '\n' ':' | sed 's/:$//')"
     echo "$version" > "$GO_CURRENT_VERSION_FILE"
     msg switch_success "$version"
     go version
@@ -123,7 +126,7 @@ _auto_load_go_version() {
         local target_dir="$GO_VERSIONS_DIR/go$current_version"
         if [[ -d "$target_dir" ]]; then
             export GOROOT="$target_dir"
-            export PATH="$GOROOT/bin:$(echo "$PATH" | tr ':' '\n' | grep -v "^$GO_VERSIONS_DIR/go" | tr '\n' ':' | sed 's/:$//')"
+            export PATH="$GOROOT/bin:$(echo "$PATH" | tr ':' '\n' | grep -v "^$GO_VERSIONS_DIR/go[0-9]" | tr '\n' ':' | sed 's/:$//')"
         fi
     fi
 }
