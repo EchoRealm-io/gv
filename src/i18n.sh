@@ -58,6 +58,7 @@ msg() {
                 install_source_hint) echo "执行以下命令使配置生效:" ;;
                 install_restart_hint) echo "或重启终端" ;;
                 install_restart_ide) echo "请重启 VSCode/Trae 等 IDE 使 Go 扩展生效" ;;
+                install_next_step) echo "下一步: 运行以下命令安装 Go 版本" ;;
                 install_usage_hint) echo "可用命令:" ;;
                 existing_go_detected) echo "检测到现有的 Go 安装" ;;
                 existing_go_path) echo "路径" ;;
@@ -139,6 +140,7 @@ msg() {
                 install_source_hint) echo "執行以下命令使配置生效:" ;;
                 install_restart_hint) echo "或重新啟動終端機" ;;
                 install_restart_ide) echo "請重新啟動 VSCode/Trae 等 IDE 使 Go 擴充功能生效" ;;
+                install_next_step) echo "下一步: 執行以下命令安裝 Go 版本" ;;
                 install_usage_hint) echo "可用命令:" ;;
                 existing_go_detected) echo "偵測到現有的 Go 安裝" ;;
                 existing_go_path) echo "路徑" ;;
@@ -220,6 +222,7 @@ msg() {
                 install_source_hint) echo "以下のコマンドで設定を反映:" ;;
                 install_restart_hint) echo "またはターミナルを再起動" ;;
                 install_restart_ide) echo "VSCode/Trae などの IDE を再起動して Go 拡張を反映してください" ;;
+                install_next_step) echo "次のステップ: 以下のコマンドで Go をインストール" ;;
                 install_usage_hint) echo "使用可能なコマンド:" ;;
                 existing_go_detected) echo "既存の Go インストールが検出されました" ;;
                 existing_go_path) echo "パス" ;;
@@ -301,6 +304,7 @@ msg() {
                 install_source_hint) echo "다음 명령으로 설정 적용:" ;;
                 install_restart_hint) echo "또는 터미널 재시작" ;;
                 install_restart_ide) echo "VSCode/Trae 등 IDE 를 다시 시작하여 Go 확장을 적용하세요" ;;
+                install_next_step) echo "다음 단계: 아래 명령으로 Go 버전 설치" ;;
                 install_usage_hint) echo "사용 가능한 명령:" ;;
                 existing_go_detected) echo "기존 Go 설치가 감지되었습니다" ;;
                 existing_go_path) echo "경로" ;;
@@ -382,6 +386,7 @@ msg() {
                 install_source_hint) echo "Please run the following to apply changes:" ;;
                 install_restart_hint) echo "Or restart your terminal." ;;
                 install_restart_ide) echo "Please restart VSCode/Trae for the Go extension to pick up changes" ;;
+                install_next_step) echo "Next: run the command below to install a Go version" ;;
                 install_usage_hint) echo "You can now use:" ;;
                 existing_go_detected) echo "Existing Go installation detected" ;;
                 existing_go_path) echo "Path" ;;

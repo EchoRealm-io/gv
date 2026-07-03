@@ -121,16 +121,15 @@ if [[ -n "$EXISTING_GO" ]] && [[ -x "$EXISTING_GO/bin/go" ]]; then
         [[ "$EXISTING_GO_SOURCE" == "Homebrew" ]] && msg existing_go_cleanup_brew
         [[ "$EXISTING_GO_SOURCE" == "system-installed" ]] && msg existing_go_cleanup_system "$EXISTING_GO"
         [[ "$EXISTING_GO_SOURCE" == "PATH" ]] && msg existing_go_cleanup_path
-    fi
-
-    echo ""
-    msg existing_go_continue
-    echo -n "> "
-    read -r continue_install < /dev/tty
-    continue_install=${continue_install:-Y}
-    if [[ ! "$continue_install" =~ ^[Yy]$ ]]; then
-        msg existing_go_abort
-        exit 0
+        echo ""
+        msg existing_go_continue
+        echo -n "> "
+        read -r continue_install < /dev/tty
+        continue_install=${continue_install:-Y}
+        if [[ ! "$continue_install" =~ ^[Yy]$ ]]; then
+            msg existing_go_abort
+            exit 0
+        fi
     fi
     echo ""
 fi
@@ -303,6 +302,9 @@ echo "    source $RC_FILE"
 msg install_restart_hint
 echo ""
 msg install_restart_ide
+echo ""
+msg install_next_step
+echo "  gv-install"
 echo ""
 msg install_usage_hint
 echo "  gv-install [<version>]  $(msg help_go_install)"
