@@ -59,7 +59,9 @@ msg() {
                 install_restart_hint) echo "或重启终端" ;;
                 install_source_now) echo "是否现在应用配置? [Y/N]" ;;
                 install_sourcing) echo "配置已应用" ;;
-                install_usage_hint) echo "可用命令: $arg1" ;;
+                install_sourced_current) echo "注意: 仅对当前终端窗口生效" ;;
+                install_restart_ide) echo "请重启 VSCode/Trae 等 IDE 使 Go 扩展生效" ;;
+                install_usage_hint) echo "可用命令:" ;;
                 existing_go_detected) echo "检测到现有的 Go 安装" ;;
                 existing_go_path) echo "路径" ;;
                 existing_go_source) echo "来源" ;;
@@ -141,7 +143,9 @@ msg() {
                 install_restart_hint) echo "或重新啟動終端機" ;;
                 install_source_now) echo "是否現在套用設定? [Y/N]" ;;
                 install_sourcing) echo "設定已套用" ;;
-                install_usage_hint) echo "可用命令: $arg1" ;;
+                install_sourced_current) echo "注意: 僅對目前終端機視窗生效" ;;
+                install_restart_ide) echo "請重新啟動 VSCode/Trae 等 IDE 使 Go 擴充功能生效" ;;
+                install_usage_hint) echo "可用命令:" ;;
                 existing_go_detected) echo "偵測到現有的 Go 安裝" ;;
                 existing_go_path) echo "路徑" ;;
                 existing_go_source) echo "來源" ;;
@@ -223,7 +227,9 @@ msg() {
                 install_restart_hint) echo "またはターミナルを再起動" ;;
                 install_source_now) echo "設定を今すぐ適用しますか？[Y/N]" ;;
                 install_sourcing) echo "設定を適用しました" ;;
-                install_usage_hint) echo "使用可能なコマンド: $arg1" ;;
+                install_sourced_current) echo "注意: 現在のターミナルウィンドウのみ有効" ;;
+                install_restart_ide) echo "VSCode/Trae などの IDE を再起動して Go 拡張を反映してください" ;;
+                install_usage_hint) echo "使用可能なコマンド:" ;;
                 existing_go_detected) echo "既存の Go インストールが検出されました" ;;
                 existing_go_path) echo "パス" ;;
                 existing_go_source) echo "ソース" ;;
@@ -305,7 +311,9 @@ msg() {
                 install_restart_hint) echo "또는 터미널 재시작" ;;
                 install_source_now) echo "지금 설정을 적용하시겠습니까? [Y/N]" ;;
                 install_sourcing) echo "설정이 적용됨" ;;
-                install_usage_hint) echo "사용 가능한 명령: $arg1" ;;
+                install_sourced_current) echo "주의: 현재 터미널 창에만 적용됨" ;;
+                install_restart_ide) echo "VSCode/Trae 등 IDE 를 다시 시작하여 Go 확장을 적용하세요" ;;
+                install_usage_hint) echo "사용 가능한 명령:" ;;
                 existing_go_detected) echo "기존 Go 설치가 감지되었습니다" ;;
                 existing_go_path) echo "경로" ;;
                 existing_go_source) echo "소스" ;;
@@ -387,7 +395,9 @@ msg() {
                 install_restart_hint) echo "Or restart your terminal." ;;
                 install_source_now) echo "Apply configuration now? [Y/N]" ;;
                 install_sourcing) echo "Configuration applied" ;;
-                install_usage_hint) echo "You can now use: $arg1" ;;
+                install_sourced_current) echo "Note: only effective in this terminal window" ;;
+                install_restart_ide) echo "Please restart VSCode/Trae for the Go extension to pick up changes" ;;
+                install_usage_hint) echo "You can now use:" ;;
                 existing_go_detected) echo "Existing Go installation detected" ;;
                 existing_go_path) echo "Path" ;;
                 existing_go_source) echo "Source" ;;

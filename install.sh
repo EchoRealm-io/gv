@@ -79,10 +79,13 @@ if [[ -z "$EXISTING_GO" ]]; then
     done
 fi
 
-# Go binary found in PATH
+# Go binary found in PATH (skip gv's own wrapper)
 if [[ -z "$EXISTING_GO" ]] && command -v go &>/dev/null; then
-    EXISTING_GO=$(dirname "$(dirname "$(command -v go)")")
-    EXISTING_GO_SOURCE="PATH"
+    go_bin=$(command -v go)
+    if [[ "$go_bin" != "$HOME/bin/go" ]]; then
+        EXISTING_GO=$(dirname "$(dirname "$go_bin")")
+        EXISTING_GO_SOURCE="PATH"
+    fi
 fi
 
 if [[ -n "$EXISTING_GO" ]] && [[ -x "$EXISTING_GO/bin/go" ]]; then
@@ -133,7 +136,7 @@ if [[ -n "$EXISTING_GO" ]] && [[ -x "$EXISTING_GO/bin/go" ]]; then
 fi
 
 msg install_banner
-msg install_prompt_defaults
+echo -e "${YELLOW}$(msg install_prompt_defaults)${NC}"
 
 # Detect OS default installation directory
 default_install_dir=$(detect_os_default_dir)
@@ -302,7 +305,14 @@ msg install_source_now
 echo -n "> "
 read -r do_source < /dev/tty
 if [[ "$do_source" =~ ^[Yy]$ ]]; then
-    echo -e "${GREEN}$(msg install_sourcing)${NC}"
+    echo "$(msg install_sourcing): source $RC_FILE"
+    msg install_sourced_current
+    msg install_restart_ide
 fi
 echo ""
-msg install_usage_hint "gv-install, gv-use, gv-list, gv-mirror"
+msg install_usage_hint
+echo "  gv-install [<version>]  $(msg help_go_install)"
+echo "  gv-use [-g] <version>   $(msg help_go_use)"
+echo "  gv-list                 $(msg help_go_list)"
+echo "  gv-mirror [<url>]       $(msg help_go_mirror)"
+echo "  gv-help                 $(msg help_go_help)"

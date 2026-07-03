@@ -31,6 +31,7 @@ curl -sSL https://raw.githubusercontent.com/EchoRealm-io/gv/main/install.sh | ba
 | `gv-use [-g] <版本号>` | 切换版本（仅当前会话；加 `-g` 持久生效，新终端继承） | `gv-use 1.20.6` / `gv-use -g 1.21.5`                        |
 | `gv-list`              | 列出已安装的版本                                     | `gv-list`                                                   |
 | `gv-mirror [URL]`      | 查看当前镜像，或设置新镜像                           | `gv-mirror` / `gv-mirror https://mirrors.aliyun.com/golang` |
+| `gv-help`              | 显示帮助和可用命令                                   | `gv-help`                                                   |
 
 ## 配置
 
