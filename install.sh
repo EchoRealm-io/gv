@@ -79,11 +79,11 @@ if [[ -n "$EXISTING_GO" ]] && [[ -x "$EXISTING_GO/bin/go" ]]; then
     EXISTING_VERSION=$("$EXISTING_GO/bin/go" version 2>/dev/null | grep -oE 'go[0-9]+\.[0-9]+(\.[0-9]+)?' || echo "unknown")
     echo ""
     echo -e "${YELLOW}⚠️  $(msg existing_go_detected)${NC}"
-    echo "    $(msg existing_go_path)   : $EXISTING_GO"
-    echo "    $(msg existing_go_source) : $EXISTING_GO_SOURCE"
+    echo "    $(msg existing_go_path):    $EXISTING_GO"
+    echo "    $(msg existing_go_source):  $EXISTING_GO_SOURCE"
     echo "    $(msg existing_go_version): $EXISTING_VERSION"
     echo ""
-    msg existing_go_warn "${GO_VERSIONS_DIR:-/usr/local}"
+    msg existing_go_warn "/usr/local"
     echo ""
     if [[ "$EXISTING_GO_SOURCE" == "Homebrew" ]]; then
         msg existing_go_cleanup_brew
