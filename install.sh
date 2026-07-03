@@ -99,14 +99,18 @@ if [[ -n "$EXISTING_GO" ]] && [[ -x "$EXISTING_GO/bin/go" ]]; then
     deleted=0
     if [[ "$EXISTING_GO_SOURCE" == "Homebrew" ]]; then
         msg existing_go_brew_prompt
+        echo -n "> "
         read -r do_delete < /dev/tty
         if [[ "$do_delete" =~ ^[Yy]$ ]]; then
+            echo "$(msg existing_go_deleting): brew uninstall go"
             brew uninstall go 2>/dev/null && { deleted=1; msg existing_go_deleted; } || msg existing_go_delete_fail
         fi
     elif [[ "$EXISTING_GO_SOURCE" == "system-installed" ]]; then
         msg existing_go_delete_prompt "$EXISTING_GO"
+        echo -n "> "
         read -r do_delete < /dev/tty
         if [[ "$do_delete" =~ ^[Yy]$ ]]; then
+            echo "$(msg existing_go_deleting): sudo rm -rf $EXISTING_GO"
             sudo rm -rf "$EXISTING_GO" && { deleted=1; msg existing_go_deleted; } || msg existing_go_delete_fail
         fi
     fi
@@ -118,6 +122,7 @@ if [[ -n "$EXISTING_GO" ]] && [[ -x "$EXISTING_GO/bin/go" ]]; then
 
     echo ""
     msg existing_go_continue
+    echo -n "> "
     read -r continue_install < /dev/tty
     continue_install=${continue_install:-Y}
     if [[ ! "$continue_install" =~ ^[Yy]$ ]]; then
@@ -133,16 +138,19 @@ msg install_prompt_defaults
 # Detect OS default installation directory
 default_install_dir=$(detect_os_default_dir)
 msg install_dir_prompt "$default_install_dir"
+echo -n "> "
 read -r user_install_dir < /dev/tty
 user_install_dir=${user_install_dir:-$default_install_dir}
 
 default_default_version="1.26.4"
 msg install_default_version_prompt "$default_default_version"
+echo -n "> "
 read -r user_default_version < /dev/tty
 user_default_version=${user_default_version:-$default_default_version}
 
 default_min_version="1.21"
 msg install_min_version_prompt "$default_min_version"
+echo -n "> "
 read -r user_min_version < /dev/tty
 user_min_version=${user_min_version:-$default_min_version}
 
@@ -156,6 +164,7 @@ detect_region_mirror() {
 }
 default_mirror=$(detect_region_mirror)
 msg install_mirror_prompt "$default_mirror"
+echo -n "> "
 read -r user_mirror < /dev/tty
 user_mirror=${user_mirror:-$default_mirror}
 
@@ -217,7 +226,7 @@ OLD_FILES=()
 
 for f in "${ALL_RC_FILES[@]}"; do
     if [[ -f "$f" ]]; then
-        if grep -qE 'export GOROOT=|GOROOT/bin' "$f" 2>/dev/null; then
+        if grep -v '^[[:space:]]*#' "$f" 2>/dev/null | grep -qE 'export GOROOT=|GOROOT/bin'; then
             OLD_FILES+=("$f")
         fi
     fi
@@ -228,19 +237,20 @@ if [[ ${#OLD_FILES[@]} -gt 0 ]]; then
     echo -e "${YELLOW}⚠️  $(msg old_config_detected)${NC}"
     for f in "${OLD_FILES[@]}"; do
         echo "    $f"
-        grep -nE 'export GOROOT=|GOROOT/bin' "$f" 2>/dev/null | while read line; do
+        grep -v '^[[:space:]]*#' "$f" 2>/dev/null | grep -nE 'export GOROOT=|GOROOT/bin' | while read line; do
             echo "      $line"
         done
     done
     echo ""
     msg old_config_warn
     msg old_config_prompt
+    echo -n "> "
     read -r comment_old < /dev/tty
     comment_old=${comment_old:-Y}
 
     if [[ "$comment_old" =~ ^[Yy]$ ]]; then
         for f in "${OLD_FILES[@]}"; do
-            line_nums=$(grep -nE 'export GOROOT=|GOROOT/bin' "$f" 2>/dev/null | cut -d: -f1 | sort -rn | uniq)
+            line_nums=$(grep -v '^[[:space:]]*#' "$f" 2>/dev/null | grep -nE 'export GOROOT=|GOROOT/bin' | cut -d: -f1 | sort -rn | uniq)
             while IFS= read -r ln; do
                 [[ -z "$ln" ]] && continue
                 if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -251,6 +261,13 @@ if [[ ${#OLD_FILES[@]} -gt 0 ]]; then
             done <<< "$line_nums"
         done
         echo -e "${GREEN}$(msg old_config_commented)${NC}"
+        echo ""
+        msg old_config_result
+        for f in "${OLD_FILES[@]}"; do
+            grep -nE '# \(commented by gv\)' "$f" 2>/dev/null | while read line; do
+                echo "    $line"
+            done
+        done
         echo ""
         echo -e "${YELLOW}$(msg vscode_hint)${NC}"
         msg vscode_hint_detail "${user_install_dir:-/usr/local}" "${user_default_version:-1.26.4}"
@@ -281,4 +298,11 @@ msg install_source_hint
 echo "    source $RC_FILE"
 msg install_restart_hint
 echo ""
-msg install_usage_hint "go-install, go-use, go-list, go-mirror"
+msg install_source_now
+echo -n "> "
+read -r do_source < /dev/tty
+if [[ "$do_source" =~ ^[Yy]$ ]]; then
+    echo -e "${GREEN}$(msg install_sourcing)${NC}"
+fi
+echo ""
+msg install_usage_hint "gv-install, gv-use, gv-list, gv-mirror"

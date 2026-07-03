@@ -70,7 +70,7 @@ if [[ -n "$version" ]]; then
         export GOROOT="$go_dir"
         exec "$go_dir/bin/go" "$@"
     else
-        echo "❌ Version $version not installed, run go-install $version" >&2
+        echo "❌ Version $version not installed, run gv-install $version" >&2
         default_go="$GO_VERSIONS_DIR/go$DEFAULT_GO_VERSION/bin/go"
         if [[ -x "$default_go" ]]; then
             echo "⚠️  Falling back to default $DEFAULT_GO_VERSION" >&2
@@ -82,7 +82,7 @@ if [[ -n "$version" ]]; then
         fi
     fi
 else
-    # No go.mod: prefer user's persistent choice (go-use -g), fall back to DEFAULT_GO_VERSION
+    # No go.mod: prefer user's persistent choice (gv-use -g), fall back to DEFAULT_GO_VERSION
     chosen="$DEFAULT_GO_VERSION"
     if [[ -f "$GO_CURRENT_VERSION_FILE" ]]; then
         cur=$(cat "$GO_CURRENT_VERSION_FILE")

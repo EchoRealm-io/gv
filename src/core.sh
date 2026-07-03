@@ -6,7 +6,7 @@
 : "${GO_VERSIONS_DIR:=/usr/local}"
 
 # ---------- Show/set download mirror ----------
-go-mirror() {
+gv-mirror() {
     local url=$1
     if [[ -z $url ]]; then
         msg mirror_current "$GO_DOWNLOAD_BASE_URL"
@@ -97,10 +97,10 @@ _go_install_version() {
 }
 
 # ---------- Install a specific version ----------
-# go-install               : interactive online selection (major → patch)
-# go-install 1.26           : install latest stable patch for 1.26.x
-# go-install 1.26.4         : install exact version
-go-install() {
+# gv-install               : interactive online selection (major → patch)
+# gv-install 1.26           : install latest stable patch for 1.26.x
+# gv-install 1.26.4         : install exact version
+gv-install() {
     local version="${1#go}"
     local latest
 
@@ -147,6 +147,7 @@ go-install() {
             echo "  $((i+1)). ${majors[$i]}"
         done
         msg version_prompt
+        echo -n "> "
         read -r choice < /dev/tty
         [[ "$choice" =~ ^[qQ]$ ]] && return 0
         if [[ ! "$choice" =~ ^[0-9]+$ ]] || (( choice < 1 || choice > ${#majors[@]} )); then
@@ -163,6 +164,7 @@ go-install() {
             echo "  $((i+1)). ${patches[$i]}"
         done
         msg version_prompt
+        echo -n "> "
         read -r choice < /dev/tty
         [[ "$choice" =~ ^[qQ]$ ]] && return 0
         if [[ ! "$choice" =~ ^[0-9]+$ ]] || (( choice < 1 || choice > ${#patches[@]} )); then
@@ -178,7 +180,7 @@ go-install() {
 }
 
 # ---------- List installed versions ----------
-go-list() {
+gv-list() {
     msg go_list_header
     local current=""
     [[ -f "$GO_CURRENT_VERSION_FILE" ]] && current=$(cat "$GO_CURRENT_VERSION_FILE")
@@ -193,9 +195,9 @@ go-list() {
 }
 
 # ---------- Manually switch version ----------
-# go-use <version>          : switch for current shell session only
-# go-use -g <version>       : switch and persist (new terminals inherit it)
-go-use() {
+# gv-use <version>          : switch for current shell session only
+# gv-use -g <version>       : switch and persist (new terminals inherit it)
+gv-use() {
     local persistent=0
     local version=""
     while [[ $# -gt 0 ]]; do
@@ -233,6 +235,30 @@ go-use() {
         msg switch_success "$version"
     fi
     go version
+}
+
+# ---------- Show help ----------
+gv-help() {
+    echo "gv - Go Version Manager"
+    echo ""
+    msg help_usage
+    echo ""
+    echo "  gv-install [<version>]  $(msg help_go_install)"
+    echo "  gv-use [-g] <version>   $(msg help_go_use)"
+    echo "  gv-list                 $(msg help_go_list)"
+    echo "  gv-mirror [<url>]       $(msg help_go_mirror)"
+    echo "  gv-help                 $(msg help_go_help)"
+    echo ""
+    msg help_config
+    echo "  GO_VERSIONS_DIR      $(msg help_config_dir)"
+    echo "  DEFAULT_GO_VERSION   $(msg help_config_default)"
+    echo "  MIN_GO_VERSION       $(msg help_config_min)"
+    echo "  GO_DOWNLOAD_BASE_URL $(msg help_config_mirror)"
+    echo ""
+    msg help_tips
+    echo "  $(msg help_tip1)"
+    echo "  $(msg help_tip2)"
+    echo "  $(msg help_tip3)"
 }
 
 # ---------- Auto-load the last used version on shell startup ----------

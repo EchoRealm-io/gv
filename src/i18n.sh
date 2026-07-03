@@ -21,7 +21,7 @@ msg() {
     case "$LANG_CODE" in
         zh_CN)
             case "$key" in
-                go_install_usage) echo "用法: go-install [版本号]  例如: go-install 1.21.5，或直接 go-install 在线选择" ;;
+                go_install_usage) echo "用法: gv-install [版本号]  例如: gv-install 1.21.5，或直接 gv-install 在线选择" ;;
                 version_installed) echo "版本 go$arg1 已安装在 $arg2" ;;
                 fetch_version_list) echo "正在获取可用版本列表..." ;;
                 fetch_version_fail) echo "获取版本列表失败，请检查网络连接" ;;
@@ -36,14 +36,14 @@ msg() {
                 install_complete) echo "✅ 安装完成: $arg1" ;;
                 go_list_header) echo "已安装的 Go 版本：" ;;
                 current_mark) echo "  <- 当前使用" ;;
-                switch_usage) echo "用法: go-use [-g] <版本号>  例如: go-use 1.21.5 或 go-use -g 1.21.5（持久）" ;;
-                version_not_installed) echo "❌ 版本 go$arg1 未安装，请先运行 go-install $arg1" ;;
+                switch_usage) echo "用法: gv-use [-g] <版本号>  例如: gv-use 1.21.5 或 gv-use -g 1.21.5（持久）" ;;
+                version_not_installed) echo "❌ 版本 go$arg1 未安装，请先运行 gv-install $arg1" ;;
                 already_using) echo "✅ 已在 go$arg1" ;;
                 switch_success) echo "✅ 已切换到 Go $arg1（仅当前会话生效）" ;;
                 switch_persisted) echo "✅ 已切换到 Go $arg1（已持久化，新终端生效）" ;;
                 mirror_current) echo "当前镜像: $arg1" ;;
-                mirror_usage) echo "用法: go-mirror [URL]  不带参数显示当前镜像" ;;
-                mirror_example) echo "示例: go-mirror https://mirrors.aliyun.com/golang" ;;
+                mirror_usage) echo "用法: gv-mirror [URL]  不带参数显示当前镜像" ;;
+                mirror_example) echo "示例: gv-mirror https://mirrors.aliyun.com/golang" ;;
                 mirror_set) echo "✅ 镜像已修改为: $arg1" ;;
                 mirror_reload) echo "请执行 source $arg1 或重新打开终端使当前会话生效" ;;
                 arch_not_supported) echo "不支持的架构: $arg1" ;;
@@ -57,6 +57,8 @@ msg() {
                 install_complete_banner) echo "✅ 安装完成!" ;;
                 install_source_hint) echo "执行以下命令使配置生效:" ;;
                 install_restart_hint) echo "或重启终端" ;;
+                install_source_now) echo "是否现在应用配置? [Y/N]" ;;
+                install_sourcing) echo "配置已应用" ;;
                 install_usage_hint) echo "可用命令: $arg1" ;;
                 existing_go_detected) echo "检测到现有的 Go 安装" ;;
                 existing_go_path) echo "路径" ;;
@@ -65,6 +67,7 @@ msg() {
                 existing_go_warn) echo "gv 将使用 $arg1 作为安装目录，建议先卸载现有 Go 以避免冲突" ;;
                 existing_go_delete_prompt) echo "是否删除 $arg1 [Y/N]" ;;
                 existing_go_brew_prompt) echo "是否通过 Homebrew 卸载 Go [Y/N]" ;;
+                existing_go_deleting) echo "正在执行" ;;
                 existing_go_deleted) echo "✅ 已删除旧 Go" ;;
                 existing_go_delete_fail) echo "⚠️ 删除失败，请手动处理" ;;
                 existing_go_cleanup_brew) echo "建议执行: brew uninstall go" ;;
@@ -76,15 +79,31 @@ msg() {
                 old_config_warn) echo "这些配置可能与 gv 冲突，建议注释掉相关行" ;;
                 old_config_prompt) echo "是否注释掉这些旧配置？[Y/N]" ;;
                 old_config_commented) echo "✅ 已注释旧配置" ;;
+                old_config_result) echo "注释结果:" ;;
                 old_config_kept) echo "未修改旧配置（如遇问题可手动处理）" ;;
                 vscode_hint) echo "VSCode 用户提示" ;;
                 vscode_hint_detail) echo "在 settings.json 中设置: \"go.goroot\": \"$arg1/go$arg2\"" ;;
+                help_usage) echo "命令:" ;;
+                help_go_install) echo "安装 Go 版本（无参数时在线选择）" ;;
+                help_go_use) echo "切换 Go 版本（-g 持久生效）" ;;
+                help_go_list) echo "列出已安装的版本" ;;
+                help_go_mirror) echo "查看/设置下载镜像" ;;
+                help_go_help) echo "显示帮助信息" ;;
+                help_config) echo "配置变量:" ;;
+                help_config_dir) echo "Go 安装根目录" ;;
+                help_config_default) echo "无 go.mod 时的默认版本" ;;
+                help_config_min) echo "最低版本（低于此自动升级）" ;;
+                help_config_mirror) echo "下载镜像地址" ;;
+                help_tips) echo "提示:" ;;
+                help_tip1) echo "在项目目录直接运行 go 命令，自动匹配 go.mod 版本" ;;
+                help_tip2) echo "gv-use -g <版本> 设置默认版本，新终端自动生效" ;;
+                help_tip3) echo "使用 gv-mirror 切换镜像解决下载慢的问题" ;;
                 *) echo "Unknown message" ;;
             esac
             ;;
         zh_TW)
             case "$key" in
-                go_install_usage) echo "用法: go-install [版本號]  例如: go-install 1.21.5，或直接 go-install 線上選擇" ;;
+                go_install_usage) echo "用法: gv-install [版本號]  例如: gv-install 1.21.5，或直接 gv-install 線上選擇" ;;
                 version_installed) echo "版本 go$arg1 已安裝在 $arg2" ;;
                 fetch_version_list) echo "正在獲取可用版本列表..." ;;
                 fetch_version_fail) echo "獲取版本列表失敗，請檢查網路連線" ;;
@@ -99,14 +118,14 @@ msg() {
                 install_complete) echo "✅ 安裝完成: $arg1" ;;
                 go_list_header) echo "已安裝的 Go 版本：" ;;
                 current_mark) echo "  <- 目前使用" ;;
-                switch_usage) echo "用法: go-use [-g] <版本號>  例如: go-use 1.21.5 或 go-use -g 1.21.5（持久）" ;;
-                version_not_installed) echo "❌ 版本 go$arg1 未安裝，請先執行 go-install $arg1" ;;
+                switch_usage) echo "用法: gv-use [-g] <版本號>  例如: gv-use 1.21.5 或 gv-use -g 1.21.5（持久）" ;;
+                version_not_installed) echo "❌ 版本 go$arg1 未安裝，請先執行 gv-install $arg1" ;;
                 already_using) echo "✅ 已在 go$arg1" ;;
                 switch_success) echo "✅ 已切換至 Go $arg1（僅當前會話生效）" ;;
                 switch_persisted) echo "✅ 已切換至 Go $arg1（已持久化，新終端生效）" ;;
                 mirror_current) echo "目前鏡像: $arg1" ;;
-                mirror_usage) echo "用法: go-mirror [URL]  不帶參數顯示目前鏡像" ;;
-                mirror_example) echo "範例: go-mirror https://mirrors.aliyun.com/golang" ;;
+                mirror_usage) echo "用法: gv-mirror [URL]  不帶參數顯示目前鏡像" ;;
+                mirror_example) echo "範例: gv-mirror https://mirrors.aliyun.com/golang" ;;
                 mirror_set) echo "✅ 鏡像已修改為: $arg1" ;;
                 mirror_reload) echo "請執行 source $arg1 或重新開啟終端機使目前會話生效" ;;
                 arch_not_supported) echo "不支援的架構: $arg1" ;;
@@ -120,6 +139,8 @@ msg() {
                 install_complete_banner) echo "✅ 安裝完成!" ;;
                 install_source_hint) echo "執行以下命令使配置生效:" ;;
                 install_restart_hint) echo "或重新啟動終端機" ;;
+                install_source_now) echo "是否現在套用設定? [Y/N]" ;;
+                install_sourcing) echo "設定已套用" ;;
                 install_usage_hint) echo "可用命令: $arg1" ;;
                 existing_go_detected) echo "偵測到現有的 Go 安裝" ;;
                 existing_go_path) echo "路徑" ;;
@@ -128,6 +149,7 @@ msg() {
                 existing_go_warn) echo "gv 將使用 $arg1 作為安裝目錄，建議先解除安裝現有 Go 以避免衝突" ;;
                 existing_go_delete_prompt) echo "是否刪除 $arg1 [Y/N]" ;;
                 existing_go_brew_prompt) echo "是否透過 Homebrew 解除安裝 Go [Y/N]" ;;
+                existing_go_deleting) echo "正在執行" ;;
                 existing_go_deleted) echo "✅ 已刪除舊 Go" ;;
                 existing_go_delete_fail) echo "⚠️ 刪除失敗，請手動處理" ;;
                 existing_go_cleanup_brew) echo "建議執行: brew uninstall go" ;;
@@ -139,15 +161,31 @@ msg() {
                 old_config_warn) echo "這些設定可能與 gv 衝突，建議註解掉相關行" ;;
                 old_config_prompt) echo "是否註解掉這些舊設定？[Y/N]" ;;
                 old_config_commented) echo "✅ 已註解舊設定" ;;
+                old_config_result) echo "註解結果:" ;;
                 old_config_kept) echo "未修改舊設定（如遇問題可手動處理）" ;;
                 vscode_hint) echo "VSCode 使用者提示" ;;
                 vscode_hint_detail) echo "在 settings.json 中設定: \"go.goroot\": \"$arg1/go$arg2\"" ;;
+                help_usage) echo "命令:" ;;
+                help_go_install) echo "安裝 Go 版本（無參數時線上選擇）" ;;
+                help_go_use) echo "切換 Go 版本（-g 持久生效）" ;;
+                help_go_list) echo "列出已安裝的版本" ;;
+                help_go_mirror) echo "檢視/設定下載鏡像" ;;
+                help_go_help) echo "顯示幫助資訊" ;;
+                help_config) echo "配置變數:" ;;
+                help_config_dir) echo "Go 安裝根目錄" ;;
+                help_config_default) echo "無 go.mod 時的預設版本" ;;
+                help_config_min) echo "最低版本（低於此自動升級）" ;;
+                help_config_mirror) echo "下載鏡像網址" ;;
+                help_tips) echo "提示:" ;;
+                help_tip1) echo "在專案目錄直接執行 go 命令，自動匹配 go.mod 版本" ;;
+                help_tip2) echo "gv-use -g <版本> 設定預設版本，新終端機自動生效" ;;
+                help_tip3) echo "使用 gv-mirror 切換鏡像解決下載慢的問題" ;;
                 *) echo "Unknown message" ;;
             esac
             ;;
         ja)
             case "$key" in
-                go_install_usage) echo "使用方法: go-install [バージョン]  例: go-install 1.21.5、または go-install でオンライン選択" ;;
+                go_install_usage) echo "使用方法: gv-install [バージョン]  例: gv-install 1.21.5、または gv-install でオンライン選択" ;;
                 version_installed) echo "バージョン go$arg1 は $arg2 にインストール済みです" ;;
                 fetch_version_list) echo "利用可能なバージョンリストを取得中..." ;;
                 fetch_version_fail) echo "バージョンリストの取得に失敗しました。ネットワークを確認してください" ;;
@@ -162,14 +200,14 @@ msg() {
                 install_complete) echo "✅ インストール完了: $arg1" ;;
                 go_list_header) echo "インストール済みの Go バージョン：" ;;
                 current_mark) echo "  <- 現在使用中" ;;
-                switch_usage) echo "使用方法: go-use [-g] <バージョン>  例: go-use 1.21.5 または go-use -g 1.21.5（永続）" ;;
-                version_not_installed) echo "❌ バージョン go$arg1 はインストールされていません。go-install $arg1 を実行してください" ;;
+                switch_usage) echo "使用方法: gv-use [-g] <バージョン>  例: gv-use 1.21.5 または gv-use -g 1.21.5（永続）" ;;
+                version_not_installed) echo "❌ バージョン go$arg1 はインストールされていません。gv-install $arg1 を実行してください" ;;
                 already_using) echo "✅ 既に go$arg1 を使用中です" ;;
                 switch_success) echo "✅ Go $arg1 に切り替えました（現在のセッションのみ）" ;;
                 switch_persisted) echo "✅ Go $arg1 に切り替えました（永続化、新端末で有効）" ;;
                 mirror_current) echo "現在のミラー: $arg1" ;;
-                mirror_usage) echo "使用方法: go-mirror [URL]  引数なしで現在のミラーを表示" ;;
-                mirror_example) echo "例: go-mirror https://mirrors.aliyun.com/golang" ;;
+                mirror_usage) echo "使用方法: gv-mirror [URL]  引数なしで現在のミラーを表示" ;;
+                mirror_example) echo "例: gv-mirror https://mirrors.aliyun.com/golang" ;;
                 mirror_set) echo "✅ ミラーを $arg1 に設定しました" ;;
                 mirror_reload) echo "source $arg1 を実行するか、ターミナルを再起動して現在のセッションに反映してください" ;;
                 arch_not_supported) echo "非対応のアーキテクチャ: $arg1" ;;
@@ -183,6 +221,8 @@ msg() {
                 install_complete_banner) echo "✅ インストール完了!" ;;
                 install_source_hint) echo "以下のコマンドで設定を反映:" ;;
                 install_restart_hint) echo "またはターミナルを再起動" ;;
+                install_source_now) echo "設定を今すぐ適用しますか？[Y/N]" ;;
+                install_sourcing) echo "設定を適用しました" ;;
                 install_usage_hint) echo "使用可能なコマンド: $arg1" ;;
                 existing_go_detected) echo "既存の Go インストールが検出されました" ;;
                 existing_go_path) echo "パス" ;;
@@ -191,6 +231,7 @@ msg() {
                 existing_go_warn) echo "gv は $arg1 をインストール先に使用します。競合を避けるため既存の Go をアンインストールすることを推奨します" ;;
                 existing_go_delete_prompt) echo "$arg1 を削除しますか [Y/N]" ;;
                 existing_go_brew_prompt) echo "Homebrew で Go をアンインストールしますか [Y/N]" ;;
+                existing_go_deleting) echo "実行中" ;;
                 existing_go_deleted) echo "✅ 古い Go を削除しました" ;;
                 existing_go_delete_fail) echo "⚠️ 削除に失敗しました。手動で処理してください" ;;
                 existing_go_cleanup_brew) echo "推奨: brew uninstall go を実行" ;;
@@ -202,15 +243,31 @@ msg() {
                 old_config_warn) echo "これらの設定は gv と競合する可能性があります。関連行をコメントアウトすることを推奨します" ;;
                 old_config_prompt) echo "これらの古い設定をコメントアウトしますか？[Y/N]" ;;
                 old_config_commented) echo "✅ 古い設定をコメントアウトしました" ;;
+                old_config_result) echo "コメントアウト結果:" ;;
                 old_config_kept) echo "古い設定は変更していません（問題があれば手動で処理してください）" ;;
                 vscode_hint) echo "VSCode ユーザーへのヒント" ;;
                 vscode_hint_detail) echo "settings.json で設定: \"go.goroot\": \"$arg1/go$arg2\"" ;;
+                help_usage) echo "コマンド:" ;;
+                help_go_install) echo "Go バージョンをインストール（引数なしでオンライン選択）" ;;
+                help_go_use) echo "Go バージョンを切り替え（-g で永続化）" ;;
+                help_go_list) echo "インストール済みバージョンを表示" ;;
+                help_go_mirror) echo "ダウンロードミラーを表示/設定" ;;
+                help_go_help) echo "ヘルプを表示" ;;
+                help_config) echo "設定変数:" ;;
+                help_config_dir) echo "Go インストール先" ;;
+                help_config_default) echo "go.mod がない場合のデフォルトバージョン" ;;
+                help_config_min) echo "最低バージョン（以下は自動アップグレード）" ;;
+                help_config_mirror) echo "ダウンロードミラー URL" ;;
+                help_tips) echo "ヒント:" ;;
+                help_tip1) echo "プロジェクトディレクトリで go を実行すると go.mod に自動マッチ" ;;
+                help_tip2) echo "gv-use -g <version> でデフォルトを設定、新端末で自動反映" ;;
+                help_tip3) echo "gv-mirror でミラーを切り替えてダウンロードを高速化" ;;
                 *) echo "Unknown message" ;;
             esac
             ;;
         ko)
             case "$key" in
-                go_install_usage) echo "사용법: go-install [버전]  예: go-install 1.21.5, 또는 go-install 로 온라인 선택" ;;
+                go_install_usage) echo "사용법: gv-install [버전]  예: gv-install 1.21.5, 또는 gv-install 로 온라인 선택" ;;
                 version_installed) echo "버전 go$arg1 이(가) $arg2 에 설치됨" ;;
                 fetch_version_list) echo "사용 가능한 버전 목록을 가져오는 중..." ;;
                 fetch_version_fail) echo "버전 목록을 가져오지 못했습니다. 네트워크를 확인하세요" ;;
@@ -225,14 +282,14 @@ msg() {
                 install_complete) echo "✅ 설치 완료: $arg1" ;;
                 go_list_header) echo "설치된 Go 버전:" ;;
                 current_mark) echo "  <- 현재 사용 중" ;;
-                switch_usage) echo "사용법: go-use [-g] <버전>  예: go-use 1.21.5 또는 go-use -g 1.21.5（영구）" ;;
-                version_not_installed) echo "❌ 버전 go$arg1 이(가) 설치되지 않았습니다. go-install $arg1 을(를) 실행하세요" ;;
+                switch_usage) echo "사용법: gv-use [-g] <버전>  예: gv-use 1.21.5 또는 gv-use -g 1.21.5（영구）" ;;
+                version_not_installed) echo "❌ 버전 go$arg1 이(가) 설치되지 않았습니다. gv-install $arg1 을(를) 실행하세요" ;;
                 already_using) echo "✅ 이미 go$arg1 을(를) 사용 중입니다" ;;
                 switch_success) echo "✅ Go $arg1 (으)로 전환됨 (현재 세션만)" ;;
                 switch_persisted) echo "✅ Go $arg1 (으)로 전환됨 (영구 적용, 새 터미널에 반영)" ;;
                 mirror_current) echo "현재 미러: $arg1" ;;
-                mirror_usage) echo "사용법: go-mirror [URL]  인수 없으면 현재 미러 표시" ;;
-                mirror_example) echo "예: go-mirror https://mirrors.aliyun.com/golang" ;;
+                mirror_usage) echo "사용법: gv-mirror [URL]  인수 없으면 현재 미러 표시" ;;
+                mirror_example) echo "예: gv-mirror https://mirrors.aliyun.com/golang" ;;
                 mirror_set) echo "✅ 미러가 $arg1 (으)로 설정됨" ;;
                 mirror_reload) echo "source $arg1 을(를) 실행하거나 터미널을 다시 시작하여 현재 세션에 적용하세요" ;;
                 arch_not_supported) echo "지원되지 않는 아키텍처: $arg1" ;;
@@ -246,6 +303,8 @@ msg() {
                 install_complete_banner) echo "✅ 설치 완료!" ;;
                 install_source_hint) echo "다음 명령으로 설정 적용:" ;;
                 install_restart_hint) echo "또는 터미널 재시작" ;;
+                install_source_now) echo "지금 설정을 적용하시겠습니까? [Y/N]" ;;
+                install_sourcing) echo "설정이 적용됨" ;;
                 install_usage_hint) echo "사용 가능한 명령: $arg1" ;;
                 existing_go_detected) echo "기존 Go 설치가 감지되었습니다" ;;
                 existing_go_path) echo "경로" ;;
@@ -254,6 +313,7 @@ msg() {
                 existing_go_warn) echo "gv가 $arg1 을(를) 설치 디렉터리로 사용합니다. 충돌을 피하려면 기존 Go 제거를 권장합니다" ;;
                 existing_go_delete_prompt) echo "$arg1 삭제하시겠습니까 [Y/N]" ;;
                 existing_go_brew_prompt) echo "Homebrew 로 Go 를 제거하시겠습니까 [Y/N]" ;;
+                existing_go_deleting) echo "실행 중" ;;
                 existing_go_deleted) echo "✅ 이전 Go 삭제됨" ;;
                 existing_go_delete_fail) echo "⚠️ 삭제 실패, 수동으로 처리하세요" ;;
                 existing_go_cleanup_brew) echo "권장: brew uninstall go 실행" ;;
@@ -265,15 +325,31 @@ msg() {
                 old_config_warn) echo "이 설정들은 gv 와 충돌할 수 있습니다. 관련 줄을 주석 처리하는 것을 권장합니다" ;;
                 old_config_prompt) echo "이 이전 설정들을 주석 처리하시겠습니까? [Y/N]" ;;
                 old_config_commented) echo "✅ 이전 설정을 주석 처리했습니다" ;;
+                old_config_result) echo "주석 처리 결과:" ;;
                 old_config_kept) echo "이전 설정을 변경하지 않았습니다 (문제 발생 시 수동으로 처리하세요)" ;;
                 vscode_hint) echo "VSCode 사용자 팁" ;;
                 vscode_hint_detail) echo "settings.json 에서 설정: \"go.goroot\": \"$arg1/go$arg2\"" ;;
+                help_usage) echo "명령:" ;;
+                help_go_install) echo "Go 버전 설치（인수 없으면 온라인 선택）" ;;
+                help_go_use) echo "Go 버전 전환（-g 영구 적용）" ;;
+                help_go_list) echo "설치된 버전 목록" ;;
+                help_go_mirror) echo "다운로드 미러 확인/설정" ;;
+                help_go_help) echo "도움말 표시" ;;
+                help_config) echo "설정 변수:" ;;
+                help_config_dir) echo "Go 설치 디렉터리" ;;
+                help_config_default) echo "go.mod 없을 때 기본 버전" ;;
+                help_config_min) echo "최소 버전（이하 자동 업그레이드）" ;;
+                help_config_mirror) echo "다운로드 미러 URL" ;;
+                help_tips) echo "팁:" ;;
+                help_tip1) echo "프로젝트에서 go 실행 시 go.mod 버전 자동 매칭" ;;
+                help_tip2) echo "gv-use -g <버전> 으로 기본값 설정, 새 터미널에 반영" ;;
+                help_tip3) echo "gv-mirror 로 미러 전환하여 다운로드 속도 개선" ;;
                 *) echo "Unknown message" ;;
             esac
             ;;
         *)  # English (default)
             case "$key" in
-                go_install_usage) echo "Usage: go-install [version]  e.g. go-install 1.21.5, or just go-install to pick online" ;;
+                go_install_usage) echo "Usage: gv-install [version]  e.g. gv-install 1.21.5, or just gv-install to pick online" ;;
                 version_installed) echo "Version go$arg1 already installed at $arg2" ;;
                 fetch_version_list) echo "Fetching available versions..." ;;
                 fetch_version_fail) echo "Failed to fetch version list, check network" ;;
@@ -288,14 +364,14 @@ msg() {
                 install_complete) echo "✅ Installation complete: $arg1" ;;
                 go_list_header) echo "Installed Go versions:" ;;
                 current_mark) echo "  <- currently used" ;;
-                switch_usage) echo "Usage: go-use [-g] <version>  e.g. go-use 1.21.5 or go-use -g 1.21.5 (persist)" ;;
-                version_not_installed) echo "❌ Version go$arg1 not installed, please run go-install $arg1" ;;
+                switch_usage) echo "Usage: gv-use [-g] <version>  e.g. gv-use 1.21.5 or gv-use -g 1.21.5 (persist)" ;;
+                version_not_installed) echo "❌ Version go$arg1 not installed, please run gv-install $arg1" ;;
                 already_using) echo "✅ Already using go$arg1" ;;
                 switch_success) echo "✅ Switched to Go $arg1 (current session only)" ;;
                 switch_persisted) echo "✅ Switched to Go $arg1 (persisted, new terminals inherit)" ;;
                 mirror_current) echo "Current mirror: $arg1" ;;
-                mirror_usage) echo "Usage: go-mirror [URL]  no argument shows current mirror" ;;
-                mirror_example) echo "Example: go-mirror https://mirrors.aliyun.com/golang" ;;
+                mirror_usage) echo "Usage: gv-mirror [URL]  no argument shows current mirror" ;;
+                mirror_example) echo "Example: gv-mirror https://mirrors.aliyun.com/golang" ;;
                 mirror_set) echo "✅ Mirror set to: $arg1" ;;
                 mirror_reload) echo "Please run source $arg1 or restart terminal to apply in current session" ;;
                 arch_not_supported) echo "Unsupported architecture: $arg1" ;;
@@ -309,6 +385,8 @@ msg() {
                 install_complete_banner) echo "✅ Installation complete!" ;;
                 install_source_hint) echo "Please run the following to apply changes:" ;;
                 install_restart_hint) echo "Or restart your terminal." ;;
+                install_source_now) echo "Apply configuration now? [Y/N]" ;;
+                install_sourcing) echo "Configuration applied" ;;
                 install_usage_hint) echo "You can now use: $arg1" ;;
                 existing_go_detected) echo "Existing Go installation detected" ;;
                 existing_go_path) echo "Path" ;;
@@ -317,6 +395,7 @@ msg() {
                 existing_go_warn) echo "gv will use $arg1 as the install directory. Recommend uninstalling the existing Go to avoid conflicts" ;;
                 existing_go_delete_prompt) echo "Delete $arg1 [Y/N]" ;;
                 existing_go_brew_prompt) echo "Uninstall Go via Homebrew [Y/N]" ;;
+                existing_go_deleting) echo "Running" ;;
                 existing_go_deleted) echo "✅ Old Go removed" ;;
                 existing_go_delete_fail) echo "⚠️ Removal failed, handle manually" ;;
                 existing_go_cleanup_brew) echo "Recommended: run 'brew uninstall go'" ;;
@@ -328,9 +407,25 @@ msg() {
                 old_config_warn) echo "These settings may conflict with gv; recommend commenting out the relevant lines" ;;
                 old_config_prompt) echo "Comment out these old config lines? [Y/N]" ;;
                 old_config_commented) echo "✅ Old config commented out" ;;
+                old_config_result) echo "Result:" ;;
                 old_config_kept) echo "Old config left unchanged (handle manually if issues arise)" ;;
                 vscode_hint) echo "Tip for VSCode users" ;;
                 vscode_hint_detail) echo "Set in settings.json: \"go.goroot\": \"$arg1/go$arg2\"" ;;
+                help_usage) echo "Commands:" ;;
+                help_go_install) echo "Install a Go version (no args for online selection)" ;;
+                help_go_use) echo "Switch Go version (-g to persist)" ;;
+                help_go_list) echo "List installed versions" ;;
+                help_go_mirror) echo "Show/set download mirror" ;;
+                help_go_help) echo "Show this help" ;;
+                help_config) echo "Configuration:" ;;
+                help_config_dir) echo "Go installation root" ;;
+                help_config_default) echo "Default version when no go.mod" ;;
+                help_config_min) echo "Minimum version (auto-upgrade below)" ;;
+                help_config_mirror) echo "Download mirror URL" ;;
+                help_tips) echo "Tips:" ;;
+                help_tip1) echo "Run 'go' in a project dir; version auto-matches go.mod" ;;
+                help_tip2) echo "gv-use -g <version> sets a default for new terminals" ;;
+                help_tip3) echo "Use gv-mirror to switch mirrors for faster downloads" ;;
                 *) echo "Unknown message" ;;
             esac
             ;;

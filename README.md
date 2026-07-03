@@ -1,17 +1,17 @@
 # gv - Go Version Manager
 
 **gv** (short for **G**o **V**ersion) is a lightweight, zero-dependency Go version manager for **Linux, macOS, and Windows (Git Bash/WSL)**.
-Automatically switches Go version based on `go.mod`, or manually via `go-use` – ideal for multi-project, multi-version development.
+Automatically switches Go version based on `go.mod`, or manually via `gv-use` – ideal for multi-project, multi-version development.
 
 ## Features
 
 - 🚀 **One‑line install** – fully automated setup
 - 🔄 **Smart switching** – automatically uses the version declared in `go.mod` when you `cd` into a project
-- 🎛️ **Manual override** – switch to any installed version on demand with `go-use` (add `-g` to persist across terminals)
+- 🎛️ **Manual override** – switch to any installed version on demand with `gv-use` (add `-g` to persist across terminals)
 - 📦 **Multi‑version support** – each version installed independently
 - 🐧 **Cross‑platform** – Linux, macOS, Windows (Git Bash / WSL)
 - 🌏 **Multi‑language UI** – auto‑detects system language (Simplified/Traditional Chinese, English, Japanese, Korean)
-- 🌍 **Region‑aware mirror** – auto-selects `golang.google.cn` for China, `go.dev` for other regions; easily changeable via `go-mirror`
+- 🌍 **Region‑aware mirror** – auto-selects `golang.google.cn` for China, `go.dev` for other regions; easily changeable via `gv-mirror`
 
 ## Quick Install
 
@@ -27,10 +27,10 @@ After installation, **restart your terminal** or run `source ~/.bashrc` (Linux/m
 
 | Command                 | Description                                                                  | Example                                                     |
 | ----------------------- | ---------------------------------------------------------------------------- | ----------------------------------------------------------- |
-| `go-install <version>`  | Install a specific version                                                   | `go-install 1.21.5`                                         |
-| `go-use [-g] <version>` | Switch version (current session only; add `-g` to persist for new terminals) | `go-use 1.20.6` / `go-use -g 1.21.5`                        |
-| `go-list`               | List installed versions                                                      | `go-list`                                                   |
-| `go-mirror [URL]`       | Show current mirror, or set a new one                                        | `go-mirror` / `go-mirror https://mirrors.aliyun.com/golang` |
+| `gv-install <version>`  | Install a specific version                                                   | `gv-install 1.21.5`                                         |
+| `gv-use [-g] <version>` | Switch version (current session only; add `-g` to persist for new terminals) | `gv-use 1.20.6` / `gv-use -g 1.21.5`                        |
+| `gv-list`               | List installed versions                                                      | `gv-list`                                                   |
+| `gv-mirror [URL]`       | Show current mirror, or set a new one                                        | `gv-mirror` / `gv-mirror https://mirrors.aliyun.com/golang` |
 
 ## Configuration
 
