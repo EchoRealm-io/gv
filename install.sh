@@ -85,13 +85,27 @@ if [[ -n "$EXISTING_GO" ]] && [[ -x "$EXISTING_GO/bin/go" ]]; then
     echo ""
     msg existing_go_warn "/usr/local"
     echo ""
+
+    local deleted=0
     if [[ "$EXISTING_GO_SOURCE" == "Homebrew" ]]; then
-        msg existing_go_cleanup_brew
+        msg existing_go_brew_prompt
+        read -r do_delete < /dev/tty
+        if [[ "$do_delete" =~ ^[Yy]$ ]]; then
+            brew uninstall go 2>/dev/null && { deleted=1; msg existing_go_deleted; } || msg existing_go_delete_fail
+        fi
     elif [[ "$EXISTING_GO_SOURCE" == "system-installed" ]]; then
-        msg existing_go_cleanup_system "$EXISTING_GO"
-    else
-        msg existing_go_cleanup_path
+        msg existing_go_delete_prompt "$EXISTING_GO"
+        read -r do_delete < /dev/tty
+        if [[ "$do_delete" =~ ^[Yy]$ ]]; then
+            sudo rm -rf "$EXISTING_GO" && { deleted=1; msg existing_go_deleted; } || msg existing_go_delete_fail
+        fi
     fi
+    if [[ $deleted -eq 0 ]]; then
+        [[ "$EXISTING_GO_SOURCE" == "Homebrew" ]] && msg existing_go_cleanup_brew
+        [[ "$EXISTING_GO_SOURCE" == "system-installed" ]] && msg existing_go_cleanup_system "$EXISTING_GO"
+        [[ "$EXISTING_GO_SOURCE" == "PATH" ]] && msg existing_go_cleanup_path
+    fi
+
     echo ""
     msg existing_go_continue
     read -r continue_install < /dev/tty
