@@ -93,7 +93,8 @@ if [[ -n "$EXISTING_GO" ]] && [[ -x "$EXISTING_GO/bin/go" ]]; then
         msg existing_go_cleanup_path
     fi
     echo ""
-    read -p "$(msg existing_go_continue) " continue_install < /dev/tty
+    msg existing_go_continue
+    read -r continue_install < /dev/tty
     continue_install=${continue_install:-Y}
     if [[ ! "$continue_install" =~ ^[Yy]$ ]]; then
         msg existing_go_abort
@@ -115,15 +116,18 @@ detect_os_default_dir() {
     esac
 }
 default_install_dir=$(detect_os_default_dir)
-read -p "$(msg install_dir_prompt "$default_install_dir") " user_install_dir < /dev/tty
+msg install_dir_prompt "$default_install_dir"
+read -r user_install_dir < /dev/tty
 user_install_dir=${user_install_dir:-$default_install_dir}
 
 default_default_version="1.26.4"
-read -p "$(msg install_default_version_prompt "$default_default_version") " user_default_version < /dev/tty
+msg install_default_version_prompt "$default_default_version"
+read -r user_default_version < /dev/tty
 user_default_version=${user_default_version:-$default_default_version}
 
 default_min_version="1.21"
-read -p "$(msg install_min_version_prompt "$default_min_version") " user_min_version < /dev/tty
+msg install_min_version_prompt "$default_min_version"
+read -r user_min_version < /dev/tty
 user_min_version=${user_min_version:-$default_min_version}
 
 # Detect region-appropriate default mirror
@@ -135,7 +139,8 @@ detect_region_mirror() {
     esac
 }
 default_mirror=$(detect_region_mirror)
-read -p "$(msg install_mirror_prompt "$default_mirror") " user_mirror < /dev/tty
+msg install_mirror_prompt "$default_mirror"
+read -r user_mirror < /dev/tty
 user_mirror=${user_mirror:-$default_mirror}
 
 # Write user config to defaults.sh
@@ -213,7 +218,8 @@ if [[ ${#OLD_FILES[@]} -gt 0 ]]; then
     done
     echo ""
     msg old_config_warn
-    read -p "$(msg old_config_prompt) " comment_old < /dev/tty
+    msg old_config_prompt
+    read -r comment_old < /dev/tty
     comment_old=${comment_old:-Y}
 
     if [[ "$comment_old" =~ ^[Yy]$ ]]; then
