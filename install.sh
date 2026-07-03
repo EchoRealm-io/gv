@@ -240,7 +240,7 @@ if [[ ${#OLD_FILES[@]} -gt 0 ]]; then
     echo -e "${YELLOW}⚠️  $(msg old_config_detected)${NC}"
     for f in "${OLD_FILES[@]}"; do
         echo "    $f"
-        grep -v '^[[:space:]]*#' "$f" 2>/dev/null | grep -nE 'export GOROOT=|GOROOT/bin' | while read line; do
+        grep -nE 'export GOROOT=|GOROOT/bin' "$f" 2>/dev/null | grep -v '^[0-9]*:[[:space:]]*#' | while read line; do
             echo "      $line"
         done
     done
@@ -253,7 +253,7 @@ if [[ ${#OLD_FILES[@]} -gt 0 ]]; then
 
     if [[ "$comment_old" =~ ^[Yy]$ ]]; then
         for f in "${OLD_FILES[@]}"; do
-            line_nums=$(grep -v '^[[:space:]]*#' "$f" 2>/dev/null | grep -nE 'export GOROOT=|GOROOT/bin' | cut -d: -f1 | sort -rn | uniq)
+            line_nums=$(grep -nE 'export GOROOT=|GOROOT/bin' "$f" 2>/dev/null | grep -v '^[0-9]*:[[:space:]]*#' | cut -d: -f1 | sort -rn | uniq)
             while IFS= read -r ln; do
                 [[ -z "$ln" ]] && continue
                 if [[ "$OSTYPE" == "darwin"* ]]; then
