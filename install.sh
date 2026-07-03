@@ -83,7 +83,7 @@ if [[ -n "$EXISTING_GO" ]] && [[ -x "$EXISTING_GO/bin/go" ]]; then
     echo "    $(msg existing_go_source):$EXISTING_GO_SOURCE"
     echo "    $(msg existing_go_version):$EXISTING_VERSION"
     echo ""
-    msg existing_go_warn "/usr/local"
+    msg existing_go_warn "$(detect_os_default_dir 2>/dev/null || echo '/usr/local')"
     echo ""
 
     deleted=0

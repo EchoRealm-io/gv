@@ -131,7 +131,8 @@ go-install() {
         for i in "${!majors[@]}"; do
             echo "  $((i+1)). ${majors[$i]}"
         done
-        read -r -p "$(msg version_prompt) " choice < /dev/tty
+        msg version_prompt
+        read -r choice < /dev/tty
         if [[ ! "$choice" =~ ^[0-9]+$ ]] || (( choice < 1 || choice > ${#majors[@]} )); then
             msg version_invalid
             return 1
@@ -145,7 +146,8 @@ go-install() {
         for i in "${!patches[@]}"; do
             echo "  $((i+1)). ${patches[$i]}"
         done
-        read -r -p "$(msg version_prompt) " choice < /dev/tty
+        msg version_prompt
+        read -r choice < /dev/tty
         if [[ ! "$choice" =~ ^[0-9]+$ ]] || (( choice < 1 || choice > ${#patches[@]} )); then
             msg version_invalid
             return 1
