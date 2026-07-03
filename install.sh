@@ -86,7 +86,7 @@ if [[ -n "$EXISTING_GO" ]] && [[ -x "$EXISTING_GO/bin/go" ]]; then
     msg existing_go_warn "/usr/local"
     echo ""
 
-    local deleted=0
+    deleted=0
     if [[ "$EXISTING_GO_SOURCE" == "Homebrew" ]]; then
         msg existing_go_brew_prompt
         read -r do_delete < /dev/tty
