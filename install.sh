@@ -27,6 +27,16 @@ detect_rc_file() {
     fi
 }
 
+# Detect OS default installation directory (defined early; used in existing-go warning)
+detect_os_default_dir() {
+    case "$OSTYPE" in
+        linux*)   echo "/usr/local" ;;
+        darwin*)  echo "/usr/local" ;;
+        cygwin*|msys*|mingw*) echo "$HOME/.go-versions" ;;
+        *)        echo "/usr/local" ;;
+    esac
+}
+
 # All common shell config files (for scanning old Go settings)
 ALL_RC_FILES=(
     "$HOME/.bashrc"
@@ -41,9 +51,9 @@ mkdir -p "$INSTALL_DIR"
 
 # Download source files from GitHub
 BASE_URL="https://raw.githubusercontent.com/EchoRealm-io/gv/main/src"
-curl -sSL "$BASE_URL/i18n.sh" -o "$INSTALL_DIR/i18n.sh"
-curl -sSL "$BASE_URL/core.sh" -o "$INSTALL_DIR/core.sh"
-curl -sSL "$BASE_URL/wrapper.sh" -o "$INSTALL_DIR/wrapper.sh"
+curl -fsSL "$BASE_URL/i18n.sh" -o "$INSTALL_DIR/i18n.sh"
+curl -fsSL "$BASE_URL/core.sh" -o "$INSTALL_DIR/core.sh"
+curl -fsSL "$BASE_URL/wrapper.sh" -o "$INSTALL_DIR/wrapper.sh"
 
 # Source i18n for localized messages
 source "$INSTALL_DIR/i18n.sh"
@@ -121,14 +131,6 @@ msg install_banner
 msg install_prompt_defaults
 
 # Detect OS default installation directory
-detect_os_default_dir() {
-    case "$OSTYPE" in
-        linux*)   echo "/usr/local" ;;
-        darwin*)  echo "/usr/local" ;;
-        cygwin*|msys*|mingw*) echo "$HOME/.go-versions" ;;
-        *)        echo "/usr/local" ;;
-    esac
-}
 default_install_dir=$(detect_os_default_dir)
 msg install_dir_prompt "$default_install_dir"
 read -r user_install_dir < /dev/tty

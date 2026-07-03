@@ -19,11 +19,16 @@ go-mirror() {
     if [[ -n "$ZSH_VERSION" ]]; then
         rc_file="$HOME/.zshrc"
     elif [[ -n "$BASH_VERSION" ]]; then
-        if [[ -f "$HOME/.bash_profile" ]]; then
-            rc_file="$HOME/.bash_profile"
-        else
-            rc_file="$HOME/.bashrc"
-        fi
+        case "$OSTYPE" in
+            linux*) rc_file="$HOME/.bashrc" ;;
+            *)
+                if [[ -f "$HOME/.bash_profile" ]]; then
+                    rc_file="$HOME/.bash_profile"
+                else
+                    rc_file="$HOME/.bashrc"
+                fi
+                ;;
+        esac
     else
         rc_file="$HOME/.profile"
     fi
@@ -35,11 +40,21 @@ go-mirror() {
 }
 
 # ---------- Fetch available Go versions from the mirror ----------
+# Primary: ?mode=json API (go.dev / golang.google.cn)
+# Fallback: HTML directory listing parse (aliyun and other static mirrors)
 _fetch_go_versions() {
-    local url="${GO_DOWNLOAD_BASE_URL}/?mode=json"
-    curl -sSL "$url" 2>/dev/null | tr -d '[:space:]' | \
+    local result
+    result=$(curl -sSL "${GO_DOWNLOAD_BASE_URL}/?mode=json" 2>/dev/null | tr -d '[:space:]' | \
         grep -oE '"version":"go[0-9]+\.[0-9]+(\.[0-9]+)?","stable":true' | \
-        sed 's/"version":"go//;s/","stable":true//' | sort -Vr
+        sed 's/"version":"go//;s/","stable":true//' | sort -Vr)
+    if [[ -n "$result" ]]; then
+        echo "$result"
+        return 0
+    fi
+    # Fallback: parse HTML directory listing (mirrors without ?mode=json support)
+    curl -sSL "${GO_DOWNLOAD_BASE_URL}/" 2>/dev/null | \
+        grep -oE 'go[0-9]+\.[0-9]+\.[0-9]+\.[a-z]' | \
+        sed 's/go//; s/\.[a-z]$//' | sort -Vru
 }
 
 # ---------- Internal: download and extract a Go release ----------
@@ -125,7 +140,7 @@ go-install() {
         fi
 
         # Step 1: pick major.minor
-        local majors i
+        local majors i choice
         majors=($(echo "$all_versions" | cut -d. -f1,2 | sort -Vru | uniq))
         msg select_major
         for i in "${!majors[@]}"; do
@@ -133,6 +148,7 @@ go-install() {
         done
         msg version_prompt
         read -r choice < /dev/tty
+        [[ "$choice" =~ ^[qQ]$ ]] && return 0
         if [[ ! "$choice" =~ ^[0-9]+$ ]] || (( choice < 1 || choice > ${#majors[@]} )); then
             msg version_invalid
             return 1
@@ -148,6 +164,7 @@ go-install() {
         done
         msg version_prompt
         read -r choice < /dev/tty
+        [[ "$choice" =~ ^[qQ]$ ]] && return 0
         if [[ ! "$choice" =~ ^[0-9]+$ ]] || (( choice < 1 || choice > ${#patches[@]} )); then
             msg version_invalid
             return 1
