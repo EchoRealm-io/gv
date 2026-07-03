@@ -1,8 +1,12 @@
 #!/bin/bash
 # ==================== Core management functions ====================
 
-# ---------- Set download mirror ----------
-go-set-mirror() {
+# Fallbacks (normally exported by defaults.sh; ensure standalone sourcing still works)
+: "${GO_CURRENT_VERSION_FILE:=$HOME/.go_current_version}"
+: "${GO_VERSIONS_DIR:=/usr/local}"
+
+# ---------- Show/set download mirror ----------
+go-mirror() {
     local url=$1
     if [[ -z $url ]]; then
         msg mirror_current "$GO_DOWNLOAD_BASE_URL"
@@ -92,8 +96,19 @@ go-list() {
 }
 
 # ---------- Manually switch version ----------
-switch_go_version() {
-    local version=$1
+# go-use <version>          : switch for current shell session only
+# go-use -g <version>       : switch and persist (new terminals inherit it)
+go-use() {
+    local persistent=0
+    local version=""
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            -g|--global) persistent=1; shift ;;
+            --) shift; version="${1:-}"; break ;;
+            -*) msg switch_usage; return 1 ;;
+            *) version="$1"; shift ;;
+        esac
+    done
     version=${version#go}
     if [[ -z $version ]]; then
         msg switch_usage
@@ -114,8 +129,12 @@ switch_go_version() {
     export GOROOT="$target_dir"
     # Remove any old Go paths from PATH, then prepend new bin
     export PATH="$GOROOT/bin:$(echo "$PATH" | tr ':' '\n' | grep -v "^$GO_VERSIONS_DIR/go[0-9]" | tr '\n' ':' | sed 's/:$//')"
-    echo "$version" > "$GO_CURRENT_VERSION_FILE"
-    msg switch_success "$version"
+    if [[ $persistent -eq 1 ]]; then
+        echo "$version" > "$GO_CURRENT_VERSION_FILE"
+        msg switch_persisted "$version"
+    else
+        msg switch_success "$version"
+    fi
     go version
 }
 

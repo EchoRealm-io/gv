@@ -8,6 +8,7 @@ if [[ "$OSTYPE" == *"msys"* || "$OSTYPE" == *"cygwin"* ]]; then
 else
     GO_VERSIONS_DIR="${GO_VERSIONS_DIR:-/usr/local}"
 fi
+GO_CURRENT_VERSION_FILE="${GO_CURRENT_VERSION_FILE:-$HOME/.go_current_version}"
 
 find_go_version() {
     local dir="$PWD"
@@ -81,9 +82,18 @@ if [[ -n "$version" ]]; then
         fi
     fi
 else
-    default_go="$GO_VERSIONS_DIR/go$DEFAULT_GO_VERSION/bin/go"
+    # No go.mod: prefer user's persistent choice (go-use -g), fall back to DEFAULT_GO_VERSION
+    chosen="$DEFAULT_GO_VERSION"
+    if [[ -f "$GO_CURRENT_VERSION_FILE" ]]; then
+        cur=$(cat "$GO_CURRENT_VERSION_FILE")
+        cur_dir="$GO_VERSIONS_DIR/go$cur"
+        if [[ -n "$cur" && -d "$cur_dir" && -x "$cur_dir/bin/go" ]]; then
+            chosen="$cur"
+        fi
+    fi
+    default_go="$GO_VERSIONS_DIR/go$chosen/bin/go"
     if [[ -x "$default_go" ]]; then
-        export GOROOT="$GO_VERSIONS_DIR/go$DEFAULT_GO_VERSION"
+        export GOROOT="$GO_VERSIONS_DIR/go$chosen"
         exec "$default_go" "$@"
     else
         echo "❌ No default Go installation" >&2
