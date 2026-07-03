@@ -297,18 +297,12 @@ if ! grep -q 'export PATH="$HOME/bin:$PATH"' "$RC_FILE" 2>/dev/null; then
 fi
 
 echo -e "${GREEN}$(msg install_complete_banner)${NC}"
+echo ""
 msg install_source_hint
 echo "    source $RC_FILE"
 msg install_restart_hint
 echo ""
-msg install_source_now
-echo -n "> "
-read -r do_source < /dev/tty
-if [[ "$do_source" =~ ^[Yy]$ ]]; then
-    echo "$(msg install_sourcing): source $RC_FILE"
-    msg install_sourced_current
-    msg install_restart_ide
-fi
+msg install_restart_ide
 echo ""
 msg install_usage_hint
 echo "  gv-install [<version>]  $(msg help_go_install)"
