@@ -21,8 +21,15 @@ msg() {
     case "$LANG_CODE" in
         zh_CN)
             case "$key" in
-                go_install_usage) echo "用法: go-install <版本号>  例如: go-install 1.21.5" ;;
+                go_install_usage) echo "用法: go-install [版本号]  例如: go-install 1.21.5，或直接 go-install 在线选择" ;;
                 version_installed) echo "版本 go$arg1 已安装在 $arg2" ;;
+                fetch_version_list) echo "正在获取可用版本列表..." ;;
+                fetch_version_fail) echo "获取版本列表失败，请检查网络连接" ;;
+                select_major) echo "选择 Go 大版本（输入序号，q 退出）:" ;;
+                select_patch) echo "选择 Go $arg1 的具体版本:" ;;
+                version_prompt) echo "请输入序号:" ;;
+                version_invalid) echo "无效选择" ;;
+                latest_found) echo "最新稳定版: $arg1" ;;
                 download_start) echo "正在下载 $arg1 ..." ;;
                 download_fail) echo "下载失败，请检查版本号或网络连接" ;;
                 extract_sudo) echo "解压到 $arg1 (需要管理员权限)..." ;;
@@ -40,6 +47,17 @@ msg() {
                 mirror_set) echo "✅ 镜像已修改为: $arg1" ;;
                 mirror_reload) echo "请执行 source $arg1 或重新打开终端使当前会话生效" ;;
                 arch_not_supported) echo "不支持的架构: $arg1" ;;
+                install_banner) echo "=== gv (Go Version Manager) 安装 ===" ;;
+                install_prompt_defaults) echo "按回车使用默认值" ;;
+                install_dir_prompt) echo "Go 安装目录（默认: $arg1）:" ;;
+                install_default_version_prompt) echo "默认 Go 版本（无 go.mod 时使用，默认: $arg1）:" ;;
+                install_min_version_prompt) echo "最低 Go 版本（低于此自动升级，默认: $arg1）:" ;;
+                install_mirror_prompt) echo "下载镜像地址（默认: $arg1）:" ;;
+                install_config_saved) echo "✅ 配置已保存到 $arg1" ;;
+                install_complete_banner) echo "✅ 安装完成!" ;;
+                install_source_hint) echo "执行以下命令使配置生效:" ;;
+                install_restart_hint) echo "或重启终端" ;;
+                install_usage_hint) echo "可用命令: $arg1" ;;
                 existing_go_detected) echo "检测到现有的 Go 安装" ;;
                 existing_go_path) echo "路径" ;;
                 existing_go_source) echo "来源" ;;
@@ -62,8 +80,15 @@ msg() {
             ;;
         zh_TW)
             case "$key" in
-                go_install_usage) echo "用法: go-install <版本號>  例如: go-install 1.21.5" ;;
+                go_install_usage) echo "用法: go-install [版本號]  例如: go-install 1.21.5，或直接 go-install 線上選擇" ;;
                 version_installed) echo "版本 go$arg1 已安裝在 $arg2" ;;
+                fetch_version_list) echo "正在獲取可用版本列表..." ;;
+                fetch_version_fail) echo "獲取版本列表失敗，請檢查網路連線" ;;
+                select_major) echo "選擇 Go 大版本（輸入序號，q 退出）:" ;;
+                select_patch) echo "選擇 Go $arg1 的具體版本:" ;;
+                version_prompt) echo "請輸入序號:" ;;
+                version_invalid) echo "無效選擇" ;;
+                latest_found) echo "最新穩定版: $arg1" ;;
                 download_start) echo "正在下載 $arg1 ..." ;;
                 download_fail) echo "下載失敗，請檢查版本號或網路連線" ;;
                 extract_sudo) echo "解壓縮到 $arg1 (需要管理員權限)..." ;;
@@ -81,6 +106,17 @@ msg() {
                 mirror_set) echo "✅ 鏡像已修改為: $arg1" ;;
                 mirror_reload) echo "請執行 source $arg1 或重新開啟終端機使目前會話生效" ;;
                 arch_not_supported) echo "不支援的架構: $arg1" ;;
+                install_banner) echo "=== gv (Go Version Manager) 安裝 ===" ;;
+                install_prompt_defaults) echo "按 Enter 使用預設值" ;;
+                install_dir_prompt) echo "Go 安裝目錄（預設: $arg1）:" ;;
+                install_default_version_prompt) echo "預設 Go 版本（無 go.mod 時使用，預設: $arg1）:" ;;
+                install_min_version_prompt) echo "最低 Go 版本（低於此自動升級，預設: $arg1）:" ;;
+                install_mirror_prompt) echo "下載鏡像網址（預設: $arg1）:" ;;
+                install_config_saved) echo "✅ 配置已儲存到 $arg1" ;;
+                install_complete_banner) echo "✅ 安裝完成!" ;;
+                install_source_hint) echo "執行以下命令使配置生效:" ;;
+                install_restart_hint) echo "或重新啟動終端機" ;;
+                install_usage_hint) echo "可用命令: $arg1" ;;
                 existing_go_detected) echo "偵測到現有的 Go 安裝" ;;
                 existing_go_path) echo "路徑" ;;
                 existing_go_source) echo "來源" ;;
@@ -103,8 +139,15 @@ msg() {
             ;;
         ja)
             case "$key" in
-                go_install_usage) echo "使用方法: go-install <バージョン>  例: go-install 1.21.5" ;;
+                go_install_usage) echo "使用方法: go-install [バージョン]  例: go-install 1.21.5、または go-install でオンライン選択" ;;
                 version_installed) echo "バージョン go$arg1 は $arg2 にインストール済みです" ;;
+                fetch_version_list) echo "利用可能なバージョンリストを取得中..." ;;
+                fetch_version_fail) echo "バージョンリストの取得に失敗しました。ネットワークを確認してください" ;;
+                select_major) echo "Go メジャーバージョンを選択（番号入力、q で終了）:" ;;
+                select_patch) echo "Go $arg1 のパッチバージョンを選択:" ;;
+                version_prompt) echo "番号を入力:" ;;
+                version_invalid) echo "無効な選択" ;;
+                latest_found) echo "最新安定版: $arg1" ;;
                 download_start) echo "ダウンロード中 $arg1 ..." ;;
                 download_fail) echo "ダウンロードに失敗しました。バージョンまたはネットワークを確認してください" ;;
                 extract_sudo) echo "$arg1 に展開中 (管理者権限が必要)..." ;;
@@ -122,6 +165,17 @@ msg() {
                 mirror_set) echo "✅ ミラーを $arg1 に設定しました" ;;
                 mirror_reload) echo "source $arg1 を実行するか、ターミナルを再起動して現在のセッションに反映してください" ;;
                 arch_not_supported) echo "非対応のアーキテクチャ: $arg1" ;;
+                install_banner) echo "=== gv (Go Version Manager) インストール ===" ;;
+                install_prompt_defaults) echo "Enter でデフォルト値を使用" ;;
+                install_dir_prompt) echo "Go インストール先（デフォルト: $arg1）:" ;;
+                install_default_version_prompt) echo "デフォルト Go バージョン（go.mod がない場合、デフォルト: $arg1）:" ;;
+                install_min_version_prompt) echo "最低 Go バージョン（これ以下は自動アップグレード、デフォルト: $arg1）:" ;;
+                install_mirror_prompt) echo "ダウンロードミラー URL（デフォルト: $arg1）:" ;;
+                install_config_saved) echo "✅ 設定を $arg1 に保存しました" ;;
+                install_complete_banner) echo "✅ インストール完了!" ;;
+                install_source_hint) echo "以下のコマンドで設定を反映:" ;;
+                install_restart_hint) echo "またはターミナルを再起動" ;;
+                install_usage_hint) echo "使用可能なコマンド: $arg1" ;;
                 existing_go_detected) echo "既存の Go インストールが検出されました" ;;
                 existing_go_path) echo "パス" ;;
                 existing_go_source) echo "ソース" ;;
@@ -144,8 +198,15 @@ msg() {
             ;;
         ko)
             case "$key" in
-                go_install_usage) echo "사용법: go-install <버전>  예: go-install 1.21.5" ;;
+                go_install_usage) echo "사용법: go-install [버전]  예: go-install 1.21.5, 또는 go-install 로 온라인 선택" ;;
                 version_installed) echo "버전 go$arg1 이(가) $arg2 에 설치됨" ;;
+                fetch_version_list) echo "사용 가능한 버전 목록을 가져오는 중..." ;;
+                fetch_version_fail) echo "버전 목록을 가져오지 못했습니다. 네트워크를 확인하세요" ;;
+                select_major) echo "Go 메이저 버전 선택（번호 입력, q 종료）:" ;;
+                select_patch) echo "Go $arg1 의 패치 버전 선택:" ;;
+                version_prompt) echo "번호 입력:" ;;
+                version_invalid) echo "잘못된 선택" ;;
+                latest_found) echo "최신 안정판: $arg1" ;;
                 download_start) echo "다운로드 중 $arg1 ..." ;;
                 download_fail) echo "다운로드 실패, 버전 또는 네트워크를 확인하세요" ;;
                 extract_sudo) echo "$arg1 에 압축 해제 중 (관리자 권한 필요)..." ;;
@@ -163,6 +224,17 @@ msg() {
                 mirror_set) echo "✅ 미러가 $arg1 (으)로 설정됨" ;;
                 mirror_reload) echo "source $arg1 을(를) 실행하거나 터미널을 다시 시작하여 현재 세션에 적용하세요" ;;
                 arch_not_supported) echo "지원되지 않는 아키텍처: $arg1" ;;
+                install_banner) echo "=== gv (Go Version Manager) 설치 ===" ;;
+                install_prompt_defaults) echo "Enter 를 누르면 기본값 사용" ;;
+                install_dir_prompt) echo "Go 설치 디렉터리（기본값: $arg1）:" ;;
+                install_default_version_prompt) echo "기본 Go 버전（go.mod 가 없을 때, 기본값: $arg1）:" ;;
+                install_min_version_prompt) echo "최소 Go 버전（이하 자동 업그레이드, 기본값: $arg1）:" ;;
+                install_mirror_prompt) echo "다운로드 미러 URL（기본값: $arg1）:" ;;
+                install_config_saved) echo "✅ 설정이 $arg1 에 저장됨" ;;
+                install_complete_banner) echo "✅ 설치 완료!" ;;
+                install_source_hint) echo "다음 명령으로 설정 적용:" ;;
+                install_restart_hint) echo "또는 터미널 재시작" ;;
+                install_usage_hint) echo "사용 가능한 명령: $arg1" ;;
                 existing_go_detected) echo "기존 Go 설치가 감지되었습니다" ;;
                 existing_go_path) echo "경로" ;;
                 existing_go_source) echo "소스" ;;
@@ -185,8 +257,15 @@ msg() {
             ;;
         *)  # English (default)
             case "$key" in
-                go_install_usage) echo "Usage: go-install <version>  e.g. go-install 1.21.5" ;;
+                go_install_usage) echo "Usage: go-install [version]  e.g. go-install 1.21.5, or just go-install to pick online" ;;
                 version_installed) echo "Version go$arg1 already installed at $arg2" ;;
+                fetch_version_list) echo "Fetching available versions..." ;;
+                fetch_version_fail) echo "Failed to fetch version list, check network" ;;
+                select_major) echo "Select a Go major version (enter number, q to quit):" ;;
+                select_patch) echo "Select a patch for Go $arg1:" ;;
+                version_prompt) echo "Enter number:" ;;
+                version_invalid) echo "Invalid selection" ;;
+                latest_found) echo "Latest stable: $arg1" ;;
                 download_start) echo "Downloading $arg1 ..." ;;
                 download_fail) echo "Download failed, please check version or network" ;;
                 extract_sudo) echo "Extracting to $arg1 (requires admin privilege)..." ;;
@@ -204,6 +283,17 @@ msg() {
                 mirror_set) echo "✅ Mirror set to: $arg1" ;;
                 mirror_reload) echo "Please run source $arg1 or restart terminal to apply in current session" ;;
                 arch_not_supported) echo "Unsupported architecture: $arg1" ;;
+                install_banner) echo "=== gv (Go Version Manager) Installation ===" ;;
+                install_prompt_defaults) echo "Press Enter to accept default values." ;;
+                install_dir_prompt) echo "Go installation directory (default: $arg1):" ;;
+                install_default_version_prompt) echo "Default Go version (when no go.mod, default: $arg1):" ;;
+                install_min_version_prompt) echo "Minimum Go version (auto-upgrade below this, default: $arg1):" ;;
+                install_mirror_prompt) echo "Download mirror URL (default: $arg1):" ;;
+                install_config_saved) echo "✅ Configuration saved to $arg1" ;;
+                install_complete_banner) echo "✅ Installation complete!" ;;
+                install_source_hint) echo "Please run the following to apply changes:" ;;
+                install_restart_hint) echo "Or restart your terminal." ;;
+                install_usage_hint) echo "You can now use: $arg1" ;;
                 existing_go_detected) echo "Existing Go installation detected" ;;
                 existing_go_path) echo "Path" ;;
                 existing_go_source) echo "Source" ;;

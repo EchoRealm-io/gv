@@ -93,7 +93,7 @@ if [[ -n "$EXISTING_GO" ]] && [[ -x "$EXISTING_GO/bin/go" ]]; then
         msg existing_go_cleanup_path
     fi
     echo ""
-    read -p "$(msg existing_go_continue) " continue_install
+    read -p "$(msg existing_go_continue) " continue_install < /dev/tty
     continue_install=${continue_install:-Y}
     if [[ ! "$continue_install" =~ ^[Yy]$ ]]; then
         msg existing_go_abort
@@ -102,8 +102,8 @@ if [[ -n "$EXISTING_GO" ]] && [[ -x "$EXISTING_GO/bin/go" ]]; then
     echo ""
 fi
 
-echo "=== gv (Go Version Manager) Installation ==="
-echo "Press Enter to accept default values."
+msg install_banner
+msg install_prompt_defaults
 
 # Detect OS default installation directory
 detect_os_default_dir() {
@@ -115,15 +115,15 @@ detect_os_default_dir() {
     esac
 }
 default_install_dir=$(detect_os_default_dir)
-read -p "Go installation directory (default: $default_install_dir): " user_install_dir
+read -p "$(msg install_dir_prompt "$default_install_dir") " user_install_dir < /dev/tty
 user_install_dir=${user_install_dir:-$default_install_dir}
 
 default_default_version="1.26.4"
-read -p "Default Go version (when no go.mod, default: $default_default_version): " user_default_version
+read -p "$(msg install_default_version_prompt "$default_default_version") " user_default_version < /dev/tty
 user_default_version=${user_default_version:-$default_default_version}
 
 default_min_version="1.21"
-read -p "Minimum Go version (auto-upgrade below this, default: $default_min_version): " user_min_version
+read -p "$(msg install_min_version_prompt "$default_min_version") " user_min_version < /dev/tty
 user_min_version=${user_min_version:-$default_min_version}
 
 # Detect region-appropriate default mirror
@@ -135,7 +135,7 @@ detect_region_mirror() {
     esac
 }
 default_mirror=$(detect_region_mirror)
-read -p "Download mirror URL (default: $default_mirror): " user_mirror
+read -p "$(msg install_mirror_prompt "$default_mirror") " user_mirror < /dev/tty
 user_mirror=${user_mirror:-$default_mirror}
 
 # Write user config to defaults.sh
@@ -187,7 +187,7 @@ else
 fi
 EOF
 
-echo -e "${GREEN}✅ Configuration saved to $INSTALL_DIR/defaults.sh${NC}"
+echo -e "${GREEN}$(msg install_config_saved "$INSTALL_DIR/defaults.sh")${NC}"
 
 RC_FILE=$(detect_rc_file)
 
@@ -213,7 +213,7 @@ if [[ ${#OLD_FILES[@]} -gt 0 ]]; then
     done
     echo ""
     msg old_config_warn
-    read -p "$(msg old_config_prompt) " comment_old
+    read -p "$(msg old_config_prompt) " comment_old < /dev/tty
     comment_old=${comment_old:-Y}
 
     if [[ "$comment_old" =~ ^[Yy]$ ]]; then
@@ -231,7 +231,7 @@ if [[ ${#OLD_FILES[@]} -gt 0 ]]; then
         echo -e "${GREEN}$(msg old_config_commented)${NC}"
         echo ""
         echo -e "${YELLOW}$(msg vscode_hint)${NC}"
-        msg vscode_hint_detail "$user_install_dir" "$user_default_version"
+        msg vscode_hint_detail "${user_install_dir:-/usr/local}" "${user_default_version:-1.26.4}"
     else
         msg old_config_kept
     fi
@@ -254,9 +254,9 @@ if ! grep -q 'export PATH="$HOME/bin:$PATH"' "$RC_FILE" 2>/dev/null; then
     echo 'export PATH="$HOME/bin:$PATH"' >> "$RC_FILE"
 fi
 
-echo -e "${GREEN}✅ Installation complete!${NC}"
-echo "Please run the following to apply changes:"
+echo -e "${GREEN}$(msg install_complete_banner)${NC}"
+msg install_source_hint
 echo "    source $RC_FILE"
-echo "Or restart your terminal."
+msg install_restart_hint
 echo ""
-echo "You can now use: go-install, go-use, go-list, go-mirror"
+msg install_usage_hint "go-install, go-use, go-list, go-mirror"

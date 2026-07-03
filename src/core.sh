@@ -34,21 +34,24 @@ go-mirror() {
     msg mirror_reload "$rc_file"
 }
 
-# ---------- Install a specific version ----------
-go-install() {
-    local version=$1
-    if [[ -z $version ]]; then
-        msg go_install_usage
-        return 1
-    fi
+# ---------- Fetch available Go versions from the mirror ----------
+_fetch_go_versions() {
+    local url="${GO_DOWNLOAD_BASE_URL}/?mode=json"
+    curl -sSL "$url" 2>/dev/null | tr -d '[:space:]' | \
+        grep -oE '"version":"go[0-9]+\.[0-9]+(\.[0-9]+)?","stable":true' | \
+        sed 's/"version":"go//;s/","stable":true//' | sort -Vr
+}
 
+# ---------- Internal: download and extract a Go release ----------
+_go_install_version() {
+    local version="$1"
     local target_dir="$GO_VERSIONS_DIR/go$version"
+
     if [[ -d "$target_dir" ]]; then
         msg version_installed "$version" "$target_dir"
         return 0
     fi
 
-    # Build package name based on OS and architecture
     local os_name="$GO_OS"
     local pkg_name="go$version.$os_name-$GO_ARCH$GO_PKG_EXT"
     local download_url="$GO_DOWNLOAD_BASE_URL/$pkg_name"
@@ -62,7 +65,6 @@ go-install() {
         return 1
     }
 
-    # Extract to target directory (may require sudo)
     if [[ "$GO_OS" == "windows" ]]; then
         local tmp_extract="/tmp/go_extract_$$"
         mkdir -p "$tmp_extract"
@@ -70,7 +72,6 @@ go-install() {
         mkdir -p "$target_dir"
         mv "$tmp_extract"/go/* "$target_dir/" 2>/dev/null || mv "$tmp_extract"/* "$target_dir/"
         rm -rf "$tmp_extract"
-        # Re-check: if go/ was stripped and we got the tree directly, we're done
     else
         echo "$(msg extract_sudo "$target_dir")"
         sudo mkdir -p "$target_dir"
@@ -78,6 +79,83 @@ go-install() {
     fi
     rm -f "$tmp_file"
     msg install_complete "$target_dir"
+}
+
+# ---------- Install a specific version ----------
+# go-install               : interactive online selection (major → patch)
+# go-install 1.26           : install latest stable patch for 1.26.x
+# go-install 1.26.4         : install exact version
+go-install() {
+    local version="${1#go}"
+    local latest
+
+    # Full version given (X.Y.Z) — install directly
+    if [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+        _go_install_version "$version"
+        return $?
+    fi
+
+    # Major.minor given (X.Y) — find latest patch and install
+    if [[ "$version" =~ ^[0-9]+\.[0-9]+$ ]]; then
+        msg fetch_version_list
+        local all_versions
+        all_versions="$(_fetch_go_versions)"
+        if [[ -z "$all_versions" ]]; then
+            msg fetch_version_fail
+            return 1
+        fi
+        latest=$(echo "$all_versions" | grep "^${version}\." | head -1)
+        if [[ -z "$latest" ]]; then
+            msg version_invalid
+            return 1
+        fi
+        msg latest_found "$latest"
+        _go_install_version "$latest"
+        return $?
+    fi
+
+    # No version given — interactive online selection
+    if [[ -z "$version" ]]; then
+        msg fetch_version_list
+        local all_versions
+        all_versions="$(_fetch_go_versions)"
+        if [[ -z "$all_versions" ]]; then
+            msg fetch_version_fail
+            return 1
+        fi
+
+        # Step 1: pick major.minor
+        local majors i
+        majors=($(echo "$all_versions" | cut -d. -f1,2 | sort -Vru | uniq))
+        msg select_major
+        for i in "${!majors[@]}"; do
+            echo "  $((i+1)). ${majors[$i]}"
+        done
+        read -r -p "$(msg version_prompt) " choice < /dev/tty
+        if [[ ! "$choice" =~ ^[0-9]+$ ]] || (( choice < 1 || choice > ${#majors[@]} )); then
+            msg version_invalid
+            return 1
+        fi
+        local selected_major="${majors[$((choice-1))]}"
+
+        # Step 2: pick patch for that major.minor
+        local patches
+        patches=($(echo "$all_versions" | grep "^${selected_major}\."))
+        msg select_patch "$selected_major"
+        for i in "${!patches[@]}"; do
+            echo "  $((i+1)). ${patches[$i]}"
+        done
+        read -r -p "$(msg version_prompt) " choice < /dev/tty
+        if [[ ! "$choice" =~ ^[0-9]+$ ]] || (( choice < 1 || choice > ${#patches[@]} )); then
+            msg version_invalid
+            return 1
+        fi
+        _go_install_version "${patches[$((choice-1))]}"
+        return $?
+    fi
+
+    msg go_install_usage
+    return 1
 }
 
 # ---------- List installed versions ----------
