@@ -105,18 +105,8 @@ _persist_mirrors() {
 _fetch_go_versions() {
     local mirrors="${GO_DOWNLOAD_MIRRORS:-https://go.dev/dl}"
     for mirror in $mirrors; do
-        # Try JSON API first
         local result
-        echo "  \$ curl -sSL ${mirror}/?mode=json" >&2
-        result=$(curl -sSL --connect-timeout 5 "${mirror}/?mode=json" 2>/dev/null | tr -d '[:space:]' | \
-            grep -oE '"version":"go[0-9]+\.[0-9]+(\.[0-9]+)?","stable":true' | \
-            sed 's/"version":"go//;s/","stable":true//' | sort -Vr)
-        if [[ -n "$result" ]]; then
-            echo "$result"
-            echo "  ← ${mirror} (JSON)" >&2
-            return 0
-        fi
-        # Try HTML directory listing
+        # Try HTML page first (has full version history, unlike JSON API which only returns latest 2)
         echo "  \$ curl -sSL ${mirror}/" >&2
         result=$(curl -sSL --connect-timeout 5 "${mirror}/" 2>/dev/null | \
             grep -oE 'go[0-9]+\.[0-9]+\.[0-9]+\.[a-z]' | \
@@ -124,6 +114,16 @@ _fetch_go_versions() {
         if [[ -n "$result" ]]; then
             echo "$result"
             echo "  ← ${mirror} (HTML)" >&2
+            return 0
+        fi
+        # Fallback: try JSON API
+        echo "  \$ curl -sSL ${mirror}/?mode=json" >&2
+        result=$(curl -sSL --connect-timeout 5 "${mirror}/?mode=json" 2>/dev/null | tr -d '[:space:]' | \
+            grep -oE '"version":"go[0-9]+\.[0-9]+(\.[0-9]+)?","stable":true' | \
+            sed 's/"version":"go//;s/","stable":true//' | sort -Vr)
+        if [[ -n "$result" ]]; then
+            echo "$result"
+            echo "  ← ${mirror} (JSON)" >&2
             return 0
         fi
     done
@@ -149,8 +149,8 @@ _go_install_version() {
     for mirror in $mirrors; do
         local download_url="$mirror/$pkg_name"
         msg download_start "$download_url"
-        echo "  \$ curl -L --connect-timeout 10 -o $tmp_file $download_url"
-        if curl -L --connect-timeout 10 "$download_url" -o "$tmp_file" 2>/dev/null; then
+        echo "  \$ curl -L --connect-timeout 10 --max-time 120 -o $tmp_file $download_url"
+        if curl -L --connect-timeout 10 --max-time 120 --progress-bar "$download_url" -o "$tmp_file"; then
             downloaded=1
             echo "  ✅ $(msg download_ok): $mirror" >&2
             break
