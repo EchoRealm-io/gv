@@ -103,11 +103,10 @@ _persist_mirrors() {
     export GO_DOWNLOAD_BASE_URL="$(echo "$unique" | awk '{print $1}')"
 }
 
-# ---------- Fetch available Go versions (go.dev first for full history) ----------
+# ---------- Fetch available Go versions (region mirror first, fallback to go.dev for full history) ----------
 _fetch_go_versions() {
-    # Always try go.dev HTML first (has complete release history; region mirrors may be incomplete)
-    local list_mirrors="https://go.dev/dl ${GO_DOWNLOAD_MIRRORS:-}"
-    for mirror in $list_mirrors; do
+    local mirrors="${GO_DOWNLOAD_MIRRORS:-https://go.dev/dl}"
+    for mirror in $mirrors; do
         local result
         echo "  \$ curl -sSL ${mirror}/" >&2
         result=$(curl -sSL --connect-timeout 5 "${mirror}/" 2>/dev/null | \
