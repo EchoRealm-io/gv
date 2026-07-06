@@ -37,15 +37,15 @@ msg() {
 
                 extract_sudo) echo "解压到 $arg1 (需要管理员权限)..." ;;
                 install_complete) echo "✅ 安装完成: $arg1" ;;
-                install_switched) echo "已切换到 Go $arg1（当前会话），用 gv-use -g 持久生效" ;;
+                install_switched) echo "已切换到 Go $arg1 [当前会话），用 gv-use -g 持久生效" ;;
 
                 go_list_header) echo "已安装的 Go 版本：" ;;
                 current_mark) echo "  <- 当前使用" ;;
                 switch_usage) echo "用法: gv-use [-g] <版本号>  例如: gv-use 1.21.5 或 gv-use -g 1.21.5（持久）" ;;
                 version_not_installed) echo "❌ 版本 go$arg1 未安装，请先运行 gv-install $arg1" ;;
                 already_using) echo "✅ 已在 go$arg1" ;;
-                switch_success) echo "✅ 已切换到 Go $arg1（仅当前会话生效）" ;;
-                switch_persisted) echo "✅ 已切换到 Go $arg1（已持久化，新终端生效）" ;;
+                switch_success) echo "✅ 已切换到 Go $arg1 [仅当前会话生效]" ;;
+                switch_persisted) echo "✅ 已切换到 Go $arg1 [已持久化，新终端生效]" ;;
                 mirror_current) echo "当前镜像: $arg1" ;;
                 mirror_current_mark) echo "当前" ;;
                 mirror_list) echo "镜像列表（按优先级）:" ;;
@@ -101,7 +101,7 @@ msg() {
                 vscode_hint_detail) echo "在 settings.json 中设置: \"go.goroot\": \"$arg1/go$arg2\"" ;;
                 help_usage) echo "命令:" ;;
                 help_go_install) echo "安装 Go 版本（无参数时在线选择）" ;;
-                help_go_use) echo "切换 Go 版本（-g 持久生效）" ;;
+                help_go_use) echo "切换 Go 版本（-g 持久生效]" ;;
                 help_go_list) echo "列出已安装的版本" ;;
                 help_go_mirror) echo "管理下载镜像（set|add）" ;;
                 help_go_help) echo "显示帮助信息" ;;
@@ -151,15 +151,15 @@ msg() {
 
                 extract_sudo) echo "解壓縮到 $arg1 (需要管理員權限)..." ;;
                 install_complete) echo "✅ 安裝完成: $arg1" ;;
-                install_switched) echo "已切換至 Go $arg1（目前工作階段），用 gv-use -g 持久生效" ;;
+                install_switched) echo "已切換至 Go $arg1 [目前工作階段），用 gv-use -g 持久生效" ;;
 
                 go_list_header) echo "已安裝的 Go 版本：" ;;
                 current_mark) echo "  <- 目前使用" ;;
                 switch_usage) echo "用法: gv-use [-g] <版本號>  例如: gv-use 1.21.5 或 gv-use -g 1.21.5（持久）" ;;
                 version_not_installed) echo "❌ 版本 go$arg1 未安裝，請先執行 gv-install $arg1" ;;
                 already_using) echo "✅ 已在 go$arg1" ;;
-                switch_success) echo "✅ 已切換至 Go $arg1（僅當前會話生效）" ;;
-                switch_persisted) echo "✅ 已切換至 Go $arg1（已持久化，新終端生效）" ;;
+                switch_success) echo "✅ 已切換至 Go $arg1 [僅當前會話生效]" ;;
+                switch_persisted) echo "✅ 已切換至 Go $arg1 [已持久化，新終端生效]" ;;
                 mirror_current) echo "目前鏡像: $arg1" ;;
                 mirror_current_mark) echo "目前" ;;
                 mirror_list) echo "鏡像列表（按優先級）:" ;;
@@ -216,7 +216,7 @@ msg() {
                 vscode_hint_detail) echo "在 settings.json 中設定: \"go.goroot\": \"$arg1/go$arg2\"" ;;
                 help_usage) echo "命令:" ;;
                 help_go_install) echo "安裝 Go 版本（無參數時線上選擇）" ;;
-                help_go_use) echo "切換 Go 版本（-g 持久生效）" ;;
+                help_go_use) echo "切換 Go 版本（-g 持久生效]" ;;
                 help_go_list) echo "列出已安裝的版本" ;;
                 help_go_mirror) echo "管理下載鏡像（set|add）" ;;
                 help_go_help) echo "顯示幫助資訊" ;;
