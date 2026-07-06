@@ -13,7 +13,8 @@ if [[ -z "$GO_DOWNLOAD_MIRRORS" ]] || [[ " $GO_DOWNLOAD_MIRRORS " != *" mirrors.
         zh_CN*) _DEFAULT_MIRRORS="https://mirrors.aliyun.com/golang https://go.dev/dl https://golang.google.cn/dl" ;;
         *)      _DEFAULT_MIRRORS="https://go.dev/dl https://mirrors.aliyun.com/golang https://golang.google.cn/dl" ;;
     esac
-    GO_DOWNLOAD_MIRRORS="${GO_DOWNLOAD_MIRRORS:+$GO_DOWNLOAD_MIRRORS }$_DEFAULT_MIRRORS"
+    # Region defaults first, then existing mirrors (deduped)
+    GO_DOWNLOAD_MIRRORS="$_DEFAULT_MIRRORS ${GO_DOWNLOAD_MIRRORS:-}"
     _unique=""
     for _m in $GO_DOWNLOAD_MIRRORS; do
         [[ " $_unique " != *" $_m "* ]] && _unique="$_unique $_m"
