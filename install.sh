@@ -171,7 +171,7 @@ export GO_VERSIONS_DIR="$user_install_dir"
 export GO_CURRENT_VERSION_FILE="\$HOME/.go_current_version"
 # Region-based mirror ordering: CN users get aliyun first
 case "${LC_ALL:-$LANG}" in
-    zh_CN*) _FALLBACK_MIRRORS="https://mirrors.aliyun.com/golang https://go.dev/dl https://golang.google.cn/dl" ;;
+    zh_CN*) _FALLBACK_MIRRORS="https://go.dev/dl https://mirrors.aliyun.com/golang https://golang.google.cn/dl" ;;
     *)      _FALLBACK_MIRRORS="https://go.dev/dl https://mirrors.aliyun.com/golang https://golang.google.cn/dl" ;;
 esac
 export GO_DOWNLOAD_MIRRORS="$user_mirror $_FALLBACK_MIRRORS"

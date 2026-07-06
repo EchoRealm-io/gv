@@ -5,11 +5,11 @@
 : "${GO_CURRENT_VERSION_FILE:=$HOME/.go_current_version}"
 : "${GO_VERSIONS_DIR:=/usr/local}"
 
-# Default mirror list (region-based ordering)
+# Default mirror list (go.dev first for complete version history; region mirrors for speed)
 : "${GO_DOWNLOAD_BASE_URL:=https://go.dev/dl}"
 if [[ -z "$GO_DOWNLOAD_MIRRORS" ]]; then
     case "${LC_ALL:-$LANG}" in
-        zh_CN*) GO_DOWNLOAD_MIRRORS="https://mirrors.aliyun.com/golang https://go.dev/dl https://golang.google.cn/dl" ;;
+        zh_CN*) GO_DOWNLOAD_MIRRORS="https://go.dev/dl https://mirrors.aliyun.com/golang https://golang.google.cn/dl" ;;
         *)      GO_DOWNLOAD_MIRRORS="https://go.dev/dl https://mirrors.aliyun.com/golang https://golang.google.cn/dl" ;;
     esac
 fi
