@@ -110,6 +110,8 @@ msg() {
                 uninstall_removed) echo "已删除" ;;
                 uninstall_cleaning_config) echo "正在清理 shell 配置..." ;;
                 uninstall_clean) echo "无需清理" ;;
+                uninstall_all_clean) echo "所有配置文件均为干净状态" ;;
+
 
                 uninstall_done) echo "gv 已卸载完毕" ;;
                 uninstall_cleanup_note) echo "如果克隆了 gv 仓库，现在可以删除源码目录" ;;
@@ -209,6 +211,8 @@ msg() {
                 uninstall_removing) echo "正在刪除" ;;
                 uninstall_removed) echo "已刪除" ;;
                 uninstall_cleaning_config) echo "正在清理 shell 設定..." ;;
+                uninstall_all_clean) echo "所有設定檔均為乾淨狀態" ;;
+
                 uninstall_clean) echo "無需清理" ;;
 
                 uninstall_cleanup_note) echo "如果是透過 git clone 安裝的，可以刪除複製的 gv 目錄；curl 安裝則無殘留檔案" ;;
@@ -307,6 +311,8 @@ msg() {
                 uninstall_remove_prompt) echo "$arg1 配下のすべての Go バージョンを削除しますか？[Y/N]" ;;
                 uninstall_removing) echo "削除中" ;;
                 uninstall_removed) echo "削除済み" ;;
+                uninstall_all_clean) echo "すべての設定ファイルはクリーンです" ;;
+
                 uninstall_cleaning_config) echo "shell 設定をクリーンアップ中..." ;;
                 uninstall_clean) echo "クリーンアップ不要" ;;
                 uninstall_cleanup_note) echo "git clone でインストールした場合、クローンした gv ディレクトリを削除できます；curl の場合は残留ファイルなし" ;;
@@ -407,6 +413,8 @@ msg() {
                 uninstall_removing) echo "삭제 중" ;;
                 uninstall_removed) echo "삭제됨" ;;
                 uninstall_cleaning_config) echo "shell 설정 정리 중..." ;;
+                uninstall_all_clean) echo "모든 설정 파일이 깨끗한 상태입니다" ;;
+
                 uninstall_cleanup_note) echo "git clone 으로 설치했다면 클론한 gv 디렉터리를 삭제해도 됩니다；curl 설치는 잔여 파일 없음" ;;
 
                 uninstall_clean) echo "정리 불필요" ;;
@@ -505,6 +513,8 @@ msg() {
                 uninstall_remove_prompt) echo "Remove all Go versions under $arg1? [Y/N]" ;;
                 uninstall_removing) echo "Removing" ;;
                 uninstall_removed) echo "removed" ;;
+                uninstall_all_clean) echo "All config files are clean" ;;
+
                 uninstall_cleanup_note) echo "If installed via git clone, you may delete the cloned directory; curl installs leave no local files" ;;
 
                 uninstall_cleaning_config) echo "Cleaning shell config..." ;;

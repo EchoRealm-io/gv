@@ -30,7 +30,8 @@ curl -fsSL "https://raw.githubusercontent.com/EchoRealm-io/gv/main/src/i18n.sh" 
             uninstall_removing) echo "Removing" ;;
             uninstall_removed) echo "removed" ;;
             uninstall_cleaning_config) echo "Cleaning shell config..." ;;
-            uninstall_clean) echo "Already clean" ;;
+            uninstall_clean) echo "nothing to clean" ;;
+            uninstall_all_clean) echo "All config files are clean" ;;
             uninstall_done) echo "gv has been uninstalled." ;;
             uninstall_cleanup_note) echo "If installed via git clone, you may delete the cloned directory; curl installs leave no local files" ;;
             *) echo "" ;;
@@ -103,33 +104,42 @@ declare -a GV_PATTERNS=(
 cleaned=0
 for f in "${ALL_RC_FILES[@]}"; do
     if [[ -f "$f" ]]; then
+        file_cleaned=0
         # Remove gv-added lines
         for pattern in "${GV_PATTERNS[@]}"; do
             if grep -qF "$pattern" "$f" 2>/dev/null; then
+                echo "  ${YELLOW}$f:${NC} remove $(echo "$pattern" | head -c 60)..."
                 if [[ "$OSTYPE" == "darwin"* ]]; then
                     sed -i '' "\|$pattern|d" "$f"
                 else
                     sed -i "\|$pattern|d" "$f"
                 fi
                 cleaned=1
+                file_cleaned=1
             fi
         done
         # Remove lines commented out by gv from original config
         if grep -q '# (commented by gv)' "$f" 2>/dev/null; then
+            echo "  ${YELLOW}$f:${NC} remove gv-commented lines"
             if [[ "$OSTYPE" == "darwin"* ]]; then
                 sed -i '' '/# (commented by gv)/d' "$f"
             else
                 sed -i '/# (commented by gv)/d' "$f"
             fi
             cleaned=1
+            file_cleaned=1
+        fi
+        if [[ $file_cleaned -eq 0 ]]; then
+            echo "  $f - $(msg uninstall_clean)"
         fi
     fi
 done
 
+echo ""
 if [[ $cleaned -eq 1 ]]; then
-    echo -e "  ${GREEN}✅ shell config $(msg uninstall_removed)${NC}"
+    echo -e "${GREEN}✅ shell config $(msg uninstall_removed)${NC}"
 else
-    echo -e "  ${GREEN}✅ shell config $(msg uninstall_clean)${NC}"
+    echo -e "${GREEN}✅ $(msg uninstall_all_clean)${NC}"
 fi
 echo ""
 
