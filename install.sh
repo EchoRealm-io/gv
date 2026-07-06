@@ -51,8 +51,11 @@ mkdir -p "$INSTALL_DIR"
 
 # Download source files from GitHub
 BASE_URL="https://raw.githubusercontent.com/EchoRealm-io/gv/main/src"
+echo "\$ curl -fsSL $BASE_URL/i18n.sh"
 curl -fsSL "$BASE_URL/i18n.sh" -o "$INSTALL_DIR/i18n.sh"
+echo "\$ curl -fsSL $BASE_URL/core.sh"
 curl -fsSL "$BASE_URL/core.sh" -o "$INSTALL_DIR/core.sh"
+echo "\$ curl -fsSL $BASE_URL/wrapper.sh"
 curl -fsSL "$BASE_URL/wrapper.sh" -o "$INSTALL_DIR/wrapper.sh"
 
 # Source i18n for localized messages

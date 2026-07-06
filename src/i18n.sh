@@ -32,6 +32,9 @@ msg() {
                 latest_found) echo "最新稳定版: $arg1" ;;
                 download_start) echo "正在下载 $arg1 ..." ;;
                 download_fail) echo "下载失败，请检查版本号或网络连接" ;;
+                download_ok) echo "下载成功" ;;
+                download_fallback) echo "回退尝试下一个镜像" ;;
+
                 extract_sudo) echo "解压到 $arg1 (需要管理员权限)..." ;;
                 install_complete) echo "✅ 安装完成: $arg1" ;;
                 go_list_header) echo "已安装的 Go 版本：" ;;
@@ -141,6 +144,9 @@ msg() {
                 latest_found) echo "最新穩定版: $arg1" ;;
                 download_start) echo "正在下載 $arg1 ..." ;;
                 download_fail) echo "下載失敗，請檢查版本號或網路連線" ;;
+                download_ok) echo "下載成功" ;;
+                download_fallback) echo "回退嘗試下一個鏡像" ;;
+
                 extract_sudo) echo "解壓縮到 $arg1 (需要管理員權限)..." ;;
                 install_complete) echo "✅ 安裝完成: $arg1" ;;
                 go_list_header) echo "已安裝的 Go 版本：" ;;
@@ -251,6 +257,9 @@ msg() {
                 latest_found) echo "最新安定版: $arg1" ;;
                 download_start) echo "ダウンロード中 $arg1 ..." ;;
                 download_fail) echo "ダウンロードに失敗しました。バージョンまたはネットワークを確認してください" ;;
+                download_ok) echo "ダウンロード成功" ;;
+                download_fallback) echo "フォールバック：次のミラーを試行" ;;
+
                 extract_sudo) echo "$arg1 に展開中 (管理者権限が必要)..." ;;
                 install_complete) echo "✅ インストール完了: $arg1" ;;
                 go_list_header) echo "インストール済みの Go バージョン：" ;;
@@ -360,6 +369,9 @@ msg() {
                 latest_found) echo "최신 안정판: $arg1" ;;
                 download_start) echo "다운로드 중 $arg1 ..." ;;
                 download_fail) echo "다운로드 실패, 버전 또는 네트워크를 확인하세요" ;;
+                download_ok) echo "다운로드 성공" ;;
+                download_fallback) echo "폴백: 다음 미러 시도" ;;
+
                 extract_sudo) echo "$arg1 에 압축 해제 중 (관리자 권한 필요)..." ;;
                 install_complete) echo "✅ 설치 완료: $arg1" ;;
                 go_list_header) echo "설치된 Go 버전:" ;;
@@ -469,6 +481,9 @@ msg() {
                 latest_found) echo "Latest stable: $arg1" ;;
                 download_start) echo "Downloading $arg1 ..." ;;
                 download_fail) echo "Download failed, please check version or network" ;;
+                download_ok) echo "OK" ;;
+                download_fallback) echo "fallback, trying next mirror" ;;
+
                 extract_sudo) echo "Extracting to $arg1 (requires admin privilege)..." ;;
                 install_complete) echo "✅ Installation complete: $arg1" ;;
                 go_list_header) echo "Installed Go versions:" ;;

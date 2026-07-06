@@ -7,11 +7,16 @@
 
 # Default mirror list (go.dev first for complete version history; region mirrors for speed)
 : "${GO_DOWNLOAD_BASE_URL:=https://go.dev/dl}"
-if [[ -z "$GO_DOWNLOAD_MIRRORS" ]]; then
-    case "${LC_ALL:-$LANG}" in
-        zh_CN*) GO_DOWNLOAD_MIRRORS="https://go.dev/dl https://mirrors.aliyun.com/golang https://golang.google.cn/dl" ;;
-        *)      GO_DOWNLOAD_MIRRORS="https://go.dev/dl https://mirrors.aliyun.com/golang https://golang.google.cn/dl" ;;
-    esac
+# Always ensure fallback mirrors exist (covers old defaults.sh that only set go.dev)
+if [[ -z "$GO_DOWNLOAD_MIRRORS" ]] || [[ " $GO_DOWNLOAD_MIRRORS " != *" mirrors.aliyun.com "* ]]; then
+    _DEFAULT_MIRRORS="https://go.dev/dl https://mirrors.aliyun.com/golang https://golang.google.cn/dl"
+    GO_DOWNLOAD_MIRRORS="${GO_DOWNLOAD_MIRRORS:+$GO_DOWNLOAD_MIRRORS }$_DEFAULT_MIRRORS"
+    # Deduplicate
+    _unique=""
+    for _m in $GO_DOWNLOAD_MIRRORS; do
+        [[ " $_unique " != *" $_m "* ]] && _unique="$_unique $_m"
+    done
+    GO_DOWNLOAD_MIRRORS="${_unique# }"
 fi
 
 # ---------- Show/set download mirrors ----------
@@ -102,19 +107,23 @@ _fetch_go_versions() {
     for mirror in $mirrors; do
         # Try JSON API first
         local result
+        echo "  \$ curl -sSL ${mirror}/?mode=json" >&2
         result=$(curl -sSL --connect-timeout 5 "${mirror}/?mode=json" 2>/dev/null | tr -d '[:space:]' | \
             grep -oE '"version":"go[0-9]+\.[0-9]+(\.[0-9]+)?","stable":true' | \
             sed 's/"version":"go//;s/","stable":true//' | sort -Vr)
         if [[ -n "$result" ]]; then
             echo "$result"
+            echo "  ← ${mirror} (JSON)" >&2
             return 0
         fi
         # Try HTML directory listing
+        echo "  \$ curl -sSL ${mirror}/" >&2
         result=$(curl -sSL --connect-timeout 5 "${mirror}/" 2>/dev/null | \
             grep -oE 'go[0-9]+\.[0-9]+\.[0-9]+\.[a-z]' | \
             sed 's/go//; s/\.[a-z]$//' | sort -Vru)
         if [[ -n "$result" ]]; then
             echo "$result"
+            echo "  ← ${mirror} (HTML)" >&2
             return 0
         fi
     done
@@ -140,7 +149,13 @@ _go_install_version() {
     for mirror in $mirrors; do
         local download_url="$mirror/$pkg_name"
         msg download_start "$download_url"
-        curl -L --connect-timeout 10 "$download_url" -o "$tmp_file" 2>/dev/null && { downloaded=1; break; }
+        echo "  \$ curl -L --connect-timeout 10 -o $tmp_file $download_url"
+        if curl -L --connect-timeout 10 "$download_url" -o "$tmp_file" 2>/dev/null; then
+            downloaded=1
+            echo "  ✅ $(msg download_ok): $mirror" >&2
+            break
+        fi
+        echo "  ⚠️  $(msg download_fallback)" >&2
         rm -f "$tmp_file"
     done
 
@@ -151,16 +166,23 @@ _go_install_version() {
 
     if [[ "$GO_OS" == "windows" ]]; then
         local tmp_extract="/tmp/go_extract_$$"
+        echo "  \$ mkdir -p $tmp_extract"
         mkdir -p "$tmp_extract"
+        echo "  \$ cd $tmp_extract && $GO_UNPACK_CMD $tmp_file"
         (cd "$tmp_extract" && $GO_UNPACK_CMD "$tmp_file")
+        echo "  \$ mkdir -p $target_dir && mv $tmp_extract/go/* $target_dir/"
         mkdir -p "$target_dir"
         mv "$tmp_extract"/go/* "$target_dir/" 2>/dev/null || mv "$tmp_extract"/* "$target_dir/"
+        echo "  \$ rm -rf $tmp_extract"
         rm -rf "$tmp_extract"
     else
         echo "$(msg extract_sudo "$target_dir")"
+        echo "  \$ sudo mkdir -p $target_dir"
         sudo mkdir -p "$target_dir"
+        echo "  \$ sudo $GO_UNPACK_CMD $tmp_file -C $target_dir --strip-components=1"
         sudo $GO_UNPACK_CMD "$tmp_file" -C "$target_dir" --strip-components=1
     fi
+    echo "  \$ rm -f $tmp_file"
     rm -f "$tmp_file"
     msg install_complete "$target_dir"
 }

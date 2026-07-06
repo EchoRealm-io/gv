@@ -12,6 +12,7 @@ INSTALL_DIR="$HOME/.go-version-manager"
 
 # Download latest i18n for up-to-date uninstall messages
 TMP_I18N="/tmp/gv-uninstall-i18n-$$.sh"
+echo "\$ curl -fsSL https://raw.githubusercontent.com/EchoRealm-io/gv/main/src/i18n.sh"
 curl -fsSL "https://raw.githubusercontent.com/EchoRealm-io/gv/main/src/i18n.sh" -o "$TMP_I18N" 2>/dev/null && {
     source "$TMP_I18N"
     rm -f "$TMP_I18N"
