@@ -156,16 +156,9 @@ echo -n "> "
 read -r user_min_version < /dev/tty
 user_min_version=${user_min_version:-$default_min_version}
 
-# Detect region-appropriate default mirror
-detect_region_mirror() {
-    local lang="${LC_ALL:-$LANG}"
-    case "$lang" in
-        zh_CN*) echo "https://golang.google.cn/dl" ;;
-        *)      echo "https://go.dev/dl" ;;
-    esac
-}
-default_mirror=$(detect_region_mirror)
+default_mirror="https://go.dev/dl"
 msg install_mirror_prompt "$default_mirror"
+echo "$(msg install_mirror_fallback): mirrors.aliyun.com/golang, golang.google.cn/dl"
 echo -n "> "
 read -r user_mirror < /dev/tty
 user_mirror=${user_mirror:-$default_mirror}
@@ -176,6 +169,13 @@ cat > "$INSTALL_DIR/defaults.sh" << EOF
 # ==================== User configuration for gv ====================
 export GO_VERSIONS_DIR="$user_install_dir"
 export GO_CURRENT_VERSION_FILE="\$HOME/.go_current_version"
+# Region-based mirror ordering: CN users get aliyun first
+case "${LC_ALL:-$LANG}" in
+    zh_CN*) _FALLBACK_MIRRORS="https://mirrors.aliyun.com/golang https://go.dev/dl https://golang.google.cn/dl" ;;
+    *)      _FALLBACK_MIRRORS="https://go.dev/dl https://mirrors.aliyun.com/golang https://golang.google.cn/dl" ;;
+esac
+export GO_DOWNLOAD_MIRRORS="$user_mirror $_FALLBACK_MIRRORS"
+export GO_DOWNLOAD_BASE_URL="$user_mirror"
 export GO_DOWNLOAD_BASE_URL="$user_mirror"
 export DEFAULT_GO_VERSION="$user_default_version"
 export MIN_GO_VERSION="$user_min_version"

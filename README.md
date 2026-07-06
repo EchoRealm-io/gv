@@ -30,7 +30,7 @@ After installation, **restart your terminal** or run `source ~/.bashrc` (Linux/m
 | `gv-install <version>`  | Install a specific version                                                   | `gv-install 1.21.5`                                         |
 | `gv-use [-g] <version>` | Switch version (current session only; add `-g` to persist for new terminals) | `gv-use 1.20.6` / `gv-use -g 1.21.5`                        |
 | `gv-list`               | List installed versions                                                      | `gv-list`                                                   |
-| `gv-mirror [URL]`       | Show current mirror, or set a new one                                        | `gv-mirror` / `gv-mirror https://mirrors.aliyun.com/golang` |
+| `gv-mirror [set\|add <url>]` | Manage download mirrors (list, set primary, add new)                   | `gv-mirror` / `gv-mirror add https://mirrors.aliyun.com/golang` |
 | `gv-help`               | Show help and available commands                                             | `gv-help`                                                   |
 
 ## Configuration

@@ -5,56 +5,120 @@
 : "${GO_CURRENT_VERSION_FILE:=$HOME/.go_current_version}"
 : "${GO_VERSIONS_DIR:=/usr/local}"
 
-# ---------- Show/set download mirror ----------
+# Default mirror list (region-based ordering)
+: "${GO_DOWNLOAD_BASE_URL:=https://go.dev/dl}"
+if [[ -z "$GO_DOWNLOAD_MIRRORS" ]]; then
+    case "${LC_ALL:-$LANG}" in
+        zh_CN*) GO_DOWNLOAD_MIRRORS="https://mirrors.aliyun.com/golang https://go.dev/dl https://golang.google.cn/dl" ;;
+        *)      GO_DOWNLOAD_MIRRORS="https://go.dev/dl https://mirrors.aliyun.com/golang https://golang.google.cn/dl" ;;
+    esac
+fi
+
+# ---------- Show/set download mirrors ----------
+# gv-mirror              : show all mirrors
+# gv-mirror set <url>    : set as primary mirror
+# gv-mirror add <url>    : add mirror to list
 gv-mirror() {
-    local url=$1
-    if [[ -z $url ]]; then
-        msg mirror_current "$GO_DOWNLOAD_BASE_URL"
-        msg mirror_usage
-        msg mirror_example
+    local cmd="${1:-}"
+    local url="${2:-}"
+
+    if [[ -z "$cmd" ]]; then
+        msg mirror_list
+        local i=1
+        for m in $GO_DOWNLOAD_MIRRORS; do
+            local mark=""
+            [[ "$m" == "$GO_DOWNLOAD_BASE_URL" ]] && mark=" ← $(msg mirror_current_mark)"
+            echo "  $i. $m$mark"
+            ((i++))
+        done
         return 0
     fi
-    # Persist to shell config file (~/.bashrc or ~/.zshrc)
+
+    case "$cmd" in
+        set)
+            if [[ -z "$url" ]]; then
+                msg mirror_usage
+                msg mirror_example
+                return 1
+            fi
+            _persist_mirrors "$url $GO_DOWNLOAD_MIRRORS"
+            GO_DOWNLOAD_BASE_URL="$url"
+            msg mirror_set "$url"
+            msg mirror_reload
+            ;;
+        add)
+            if [[ -z "$url" ]]; then
+                msg mirror_usage
+                msg mirror_example
+                return 1
+            fi
+            # Don't add duplicates
+            if echo "$GO_DOWNLOAD_MIRRORS" | grep -qF "$url"; then
+                msg mirror_already_exists "$url"
+                return 0
+            fi
+            _persist_mirrors "$GO_DOWNLOAD_MIRRORS $url"
+            GO_DOWNLOAD_MIRRORS="$GO_DOWNLOAD_MIRRORS $url"
+            msg mirror_added "$url"
+            msg mirror_reload
+            ;;
+        *)
+            # Assume it's a URL (backward compat: gv-mirror <url>)
+            _persist_mirrors "$cmd $GO_DOWNLOAD_MIRRORS"
+            GO_DOWNLOAD_BASE_URL="$cmd"
+            msg mirror_set "$cmd"
+            msg mirror_reload
+            ;;
+    esac
+}
+
+_persist_mirrors() {
+    local mirrors="$1"
     local rc_file
-    if [[ -n "$ZSH_VERSION" ]]; then
-        rc_file="$HOME/.zshrc"
+    if [[ -n "$ZSH_VERSION" ]]; then rc_file="$HOME/.zshrc"
     elif [[ -n "$BASH_VERSION" ]]; then
         case "$OSTYPE" in
             linux*) rc_file="$HOME/.bashrc" ;;
-            *)
-                if [[ -f "$HOME/.bash_profile" ]]; then
-                    rc_file="$HOME/.bash_profile"
-                else
-                    rc_file="$HOME/.bashrc"
-                fi
-                ;;
+            *) [[ -f "$HOME/.bash_profile" ]] && rc_file="$HOME/.bash_profile" || rc_file="$HOME/.bashrc" ;;
         esac
-    else
-        rc_file="$HOME/.profile"
-    fi
+    else rc_file="$HOME/.profile"; fi
+    # Remove duplicate entries, keep unique in order
+    local unique=""
+    for m in $mirrors; do
+        [[ " $unique " != *" $m "* ]] && unique="$unique $m"
+    done
+    unique="${unique# }"
+    sed -i.bak "/export GO_DOWNLOAD_MIRRORS=/d" "$rc_file" 2>/dev/null || true
     sed -i.bak "/export GO_DOWNLOAD_BASE_URL=/d" "$rc_file" 2>/dev/null || true
-    echo "export GO_DOWNLOAD_BASE_URL=\"$url\"" >> "$rc_file"
-    export GO_DOWNLOAD_BASE_URL="$url"
-    msg mirror_set "$url"
-    msg mirror_reload "$rc_file"
+    echo "export GO_DOWNLOAD_MIRRORS=\"$unique\"" >> "$rc_file"
+    echo "export GO_DOWNLOAD_BASE_URL=\"$(echo "$unique" | awk '{print $1}')\"" >> "$rc_file"
+    export GO_DOWNLOAD_MIRRORS="$unique"
+    export GO_DOWNLOAD_BASE_URL="$(echo "$unique" | awk '{print $1}')"
 }
 
-# ---------- Fetch available Go versions from the mirror ----------
-# Primary: ?mode=json API (go.dev / golang.google.cn)
-# Fallback: HTML directory listing parse (aliyun and other static mirrors)
+# ---------- Fetch available Go versions (try all mirrors) ----------
 _fetch_go_versions() {
-    local result
-    result=$(curl -sSL "${GO_DOWNLOAD_BASE_URL}/?mode=json" 2>/dev/null | tr -d '[:space:]' | \
-        grep -oE '"version":"go[0-9]+\.[0-9]+(\.[0-9]+)?","stable":true' | \
-        sed 's/"version":"go//;s/","stable":true//' | sort -Vr)
-    if [[ -n "$result" ]]; then
-        echo "$result"
-        return 0
-    fi
-    # Fallback: parse HTML directory listing (mirrors without ?mode=json support)
-    curl -sSL "${GO_DOWNLOAD_BASE_URL}/" 2>/dev/null | \
-        grep -oE 'go[0-9]+\.[0-9]+\.[0-9]+\.[a-z]' | \
-        sed 's/go//; s/\.[a-z]$//' | sort -Vru
+    local mirrors="${GO_DOWNLOAD_MIRRORS:-https://go.dev/dl}"
+    for mirror in $mirrors; do
+        # Try JSON API first
+        local result
+        result=$(curl -sSL --connect-timeout 5 "${mirror}/?mode=json" 2>/dev/null | tr -d '[:space:]' | \
+            grep -oE '"version":"go[0-9]+\.[0-9]+(\.[0-9]+)?","stable":true' | \
+            sed 's/"version":"go//;s/","stable":true//' | sort -Vr)
+        if [[ -n "$result" ]]; then
+            echo "$result"
+            return 0
+        fi
+        # Try HTML directory listing
+        result=$(curl -sSL --connect-timeout 5 "${mirror}/" 2>/dev/null | \
+            grep -oE 'go[0-9]+\.[0-9]+\.[0-9]+\.[a-z]' | \
+            sed 's/go//; s/\.[a-z]$//' | sort -Vru)
+        if [[ -n "$result" ]]; then
+            echo "$result"
+            return 0
+        fi
+    done
+    return 1
 }
 
 # ---------- Internal: download and extract a Go release ----------
@@ -69,16 +133,21 @@ _go_install_version() {
 
     local os_name="$GO_OS"
     local pkg_name="go$version.$os_name-$GO_ARCH$GO_PKG_EXT"
-    local download_url="$GO_DOWNLOAD_BASE_URL/$pkg_name"
-
-    msg download_start "$download_url"
-
     local tmp_file="/tmp/$pkg_name"
-    curl -L "$download_url" -o "$tmp_file" || {
+    local mirrors="${GO_DOWNLOAD_MIRRORS:-https://go.dev/dl}"
+
+    local downloaded=0
+    for mirror in $mirrors; do
+        local download_url="$mirror/$pkg_name"
+        msg download_start "$download_url"
+        curl -L --connect-timeout 10 "$download_url" -o "$tmp_file" 2>/dev/null && { downloaded=1; break; }
         rm -f "$tmp_file"
+    done
+
+    if [[ $downloaded -eq 0 ]]; then
         msg download_fail
         return 1
-    }
+    fi
 
     if [[ "$GO_OS" == "windows" ]]; then
         local tmp_extract="/tmp/go_extract_$$"
@@ -246,7 +315,7 @@ gv-help() {
     echo "  gv-install [<version>]  $(msg help_go_install)"
     echo "  gv-use [-g] <version>   $(msg help_go_use)"
     echo "  gv-list                 $(msg help_go_list)"
-    echo "  gv-mirror [<url>]       $(msg help_go_mirror)"
+    echo "  gv-mirror [set|add <url>] $(msg help_go_mirror)"
     echo "  gv-help                 $(msg help_go_help)"
     echo ""
     msg help_config

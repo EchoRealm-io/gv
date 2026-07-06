@@ -42,10 +42,16 @@ msg() {
                 switch_success) echo "✅ 已切换到 Go $arg1（仅当前会话生效）" ;;
                 switch_persisted) echo "✅ 已切换到 Go $arg1（已持久化，新终端生效）" ;;
                 mirror_current) echo "当前镜像: $arg1" ;;
-                mirror_usage) echo "用法: gv-mirror [URL]  不带参数显示当前镜像" ;;
-                mirror_example) echo "示例: gv-mirror https://mirrors.aliyun.com/golang" ;;
-                mirror_set) echo "✅ 镜像已修改为: $arg1" ;;
-                mirror_reload) echo "请执行 source $arg1 或重新打开终端使当前会话生效" ;;
+                mirror_current_mark) echo "当前" ;;
+                mirror_list) echo "镜像列表（按优先级）:" ;;
+
+                mirror_usage) echo "用法: gv-mirror [set|add <url>]  无参数显示列表" ;;
+                mirror_example) echo "示例: gv-mirror add https://mirrors.aliyun.com/golang" ;;
+                mirror_set) echo "✅ 镜像已设置: $arg1" ;;
+                mirror_added) echo "✅ 镜像已添加: $arg1" ;;
+                mirror_already_exists) echo "镜像已存在: $arg1" ;;
+
+                mirror_reload) echo "执行 source ~/.bashrc 或重开终端使当前会话生效" ;;
                 arch_not_supported) echo "不支持的架构: $arg1" ;;
                 install_banner) echo "=== gv (Go Version Manager) 安装 ===" ;;
                 install_prompt_defaults) echo "按回车使用默认值，或输入自定义值" ;;
@@ -53,6 +59,8 @@ msg() {
                 install_default_version_prompt) echo "默认 Go 版本[无 go.mod 时使用，默认: $arg1]:" ;;
                 install_min_version_prompt) echo "最低 Go 版本[低于此自动升级，默认: $arg1]:" ;;
                 install_mirror_prompt) echo "下载镜像地址[默认: $arg1]:" ;;
+                install_mirror_fallback) echo "自动回退镜像" ;;
+
                 install_config_saved) echo "✅ 配置已保存到 $arg1" ;;
                 install_complete_banner) echo "✅ 安装完成!" ;;
                 install_source_hint) echo "执行以下命令使配置生效:" ;;
@@ -90,7 +98,7 @@ msg() {
                 help_go_install) echo "安装 Go 版本（无参数时在线选择）" ;;
                 help_go_use) echo "切换 Go 版本（-g 持久生效）" ;;
                 help_go_list) echo "列出已安装的版本" ;;
-                help_go_mirror) echo "查看/设置下载镜像" ;;
+                help_go_mirror) echo "管理下载镜像（set|add）" ;;
                 help_go_help) echo "显示帮助信息" ;;
                 help_config) echo "配置变量:" ;;
                 help_config_dir) echo "Go 安装根目录" ;;
@@ -100,7 +108,7 @@ msg() {
                 help_tips) echo "提示:" ;;
                 help_tip1) echo "在项目目录直接运行 go 命令，自动匹配 go.mod 版本" ;;
                 help_tip2) echo "gv-use -g <版本> 设置默认版本，新终端自动生效" ;;
-                help_tip3) echo "使用 gv-mirror 切换镜像解决下载慢的问题" ;;
+                help_tip3) echo "gv 自动回退多个镜像源，使用 gv-mirror add 添加国内镜像加速" ;;
                 uninstall_banner) echo "=== gv 卸载 ===" ;;
                 uninstall_confirm) echo "将删除 gv 及所有管理的 Go 版本，确定继续？[Y/N]" ;;
                 uninstall_abort) echo "已取消" ;;
@@ -143,9 +151,15 @@ msg() {
                 switch_success) echo "✅ 已切換至 Go $arg1（僅當前會話生效）" ;;
                 switch_persisted) echo "✅ 已切換至 Go $arg1（已持久化，新終端生效）" ;;
                 mirror_current) echo "目前鏡像: $arg1" ;;
-                mirror_usage) echo "用法: gv-mirror [URL]  不帶參數顯示目前鏡像" ;;
+                mirror_current_mark) echo "目前" ;;
+                mirror_list) echo "鏡像列表（按優先級）:" ;;
+
+                mirror_usage) echo "用法: gv-mirror [set|add <url>]  无参数显示列表" ;;
                 mirror_example) echo "範例: gv-mirror https://mirrors.aliyun.com/golang" ;;
-                mirror_set) echo "✅ 鏡像已修改為: $arg1" ;;
+                mirror_set) echo "✅ 鏡像已設定: $arg1" ;;
+                mirror_added) echo "✅ 鏡像已新增: $arg1" ;;
+                mirror_already_exists) echo "鏡像已存在: $arg1" ;;
+
                 mirror_reload) echo "請執行 source $arg1 或重新開啟終端機使目前會話生效" ;;
                 arch_not_supported) echo "不支援的架構: $arg1" ;;
                 install_banner) echo "=== gv (Go Version Manager) 安裝 ===" ;;
@@ -154,6 +168,8 @@ msg() {
                 install_default_version_prompt) echo "預設 Go 版本[無 go.mod 時使用，預設: $arg1]:" ;;
                 install_min_version_prompt) echo "最低 Go 版本[低於此自動升級，預設: $arg1]:" ;;
                 install_mirror_prompt) echo "下載鏡像網址[預設: $arg1]:" ;;
+                install_mirror_fallback) echo "自動回退鏡像" ;;
+
                 install_config_saved) echo "✅ 配置已儲存到 $arg1" ;;
                 install_complete_banner) echo "✅ 安裝完成!" ;;
                 install_source_hint) echo "執行以下命令使配置生效:" ;;
@@ -192,7 +208,7 @@ msg() {
                 help_go_install) echo "安裝 Go 版本（無參數時線上選擇）" ;;
                 help_go_use) echo "切換 Go 版本（-g 持久生效）" ;;
                 help_go_list) echo "列出已安裝的版本" ;;
-                help_go_mirror) echo "檢視/設定下載鏡像" ;;
+                help_go_mirror) echo "管理下載鏡像（set|add）" ;;
                 help_go_help) echo "顯示幫助資訊" ;;
                 help_config) echo "配置變數:" ;;
                 help_config_dir) echo "Go 安裝根目錄" ;;
@@ -202,7 +218,7 @@ msg() {
                 help_tips) echo "提示:" ;;
                 help_tip1) echo "在專案目錄直接執行 go 命令，自動匹配 go.mod 版本" ;;
                 help_tip2) echo "gv-use -g <版本> 設定預設版本，新終端機自動生效" ;;
-                help_tip3) echo "使用 gv-mirror 切換鏡像解決下載慢的問題" ;;
+                help_tip3) echo "gv 自動回退多個鏡像源，使用 gv-mirror add 新增國內鏡像加速" ;;
                 uninstall_banner) echo "=== gv 解除安裝 ===" ;;
                 uninstall_confirm) echo "將刪除 gv 及所有管理的 Go 版本，確定繼續？[Y/N]" ;;
                 uninstall_abort) echo "已取消" ;;
@@ -245,9 +261,15 @@ msg() {
                 switch_success) echo "✅ Go $arg1 に切り替えました（現在のセッションのみ）" ;;
                 switch_persisted) echo "✅ Go $arg1 に切り替えました（永続化、新端末で有効）" ;;
                 mirror_current) echo "現在のミラー: $arg1" ;;
+                mirror_current_mark) echo "現在" ;;
+                mirror_list) echo "ミラーリスト（優先順）:" ;;
+
                 mirror_usage) echo "使用方法: gv-mirror [URL]  引数なしで現在のミラーを表示" ;;
                 mirror_example) echo "例: gv-mirror https://mirrors.aliyun.com/golang" ;;
-                mirror_set) echo "✅ ミラーを $arg1 に設定しました" ;;
+                mirror_set) echo "✅ ミラーを設定しました: $arg1" ;;
+                mirror_added) echo "✅ ミラーを追加しました: $arg1" ;;
+                mirror_already_exists) echo "ミラーは既に存在します: $arg1" ;;
+
                 mirror_reload) echo "source $arg1 を実行するか、ターミナルを再起動して現在のセッションに反映してください" ;;
                 arch_not_supported) echo "非対応のアーキテクチャ: $arg1" ;;
                 install_banner) echo "=== gv (Go Version Manager) インストール ===" ;;
@@ -256,6 +278,8 @@ msg() {
                 install_default_version_prompt) echo "デフォルト Go バージョン[go.mod がない場合、デフォルト: $arg1]:" ;;
                 install_min_version_prompt) echo "最低 Go バージョン[これ以下は自動アップグレード、デフォルト: $arg1]:" ;;
                 install_mirror_prompt) echo "ダウンロードミラー URL[デフォルト: $arg1]:" ;;
+                install_mirror_fallback) echo "自動フォールバックミラー" ;;
+
                 install_config_saved) echo "✅ 設定を $arg1 に保存しました" ;;
                 install_complete_banner) echo "✅ インストール完了!" ;;
                 install_source_hint) echo "以下のコマンドで設定を反映:" ;;
@@ -293,7 +317,7 @@ msg() {
                 help_go_install) echo "Go バージョンをインストール（引数なしでオンライン選択）" ;;
                 help_go_use) echo "Go バージョンを切り替え（-g で永続化）" ;;
                 help_go_list) echo "インストール済みバージョンを表示" ;;
-                help_go_mirror) echo "ダウンロードミラーを表示/設定" ;;
+                help_go_mirror) echo "ダウンロードミラーを管理（set|add）" ;;
                 help_go_help) echo "ヘルプを表示" ;;
                 help_config) echo "設定変数:" ;;
                 help_config_dir) echo "Go インストール先" ;;
@@ -303,7 +327,7 @@ msg() {
                 help_tips) echo "ヒント:" ;;
                 help_tip1) echo "プロジェクトディレクトリで go を実行すると go.mod に自動マッチ" ;;
                 help_tip2) echo "gv-use -g <version> でデフォルトを設定、新端末で自動反映" ;;
-                help_tip3) echo "gv-mirror でミラーを切り替えてダウンロードを高速化" ;;
+                help_tip3) echo "gv が複数ミラーを自動フォールバック、gv-mirror add で国内ミラーを追加" ;;
                 uninstall_banner) echo "=== gv アンインストール ===" ;;
                 uninstall_confirm) echo "gv と管理下のすべての Go バージョンを削除します。続行しますか？[Y/N]" ;;
                 uninstall_abort) echo "キャンセルしました" ;;
@@ -346,9 +370,15 @@ msg() {
                 switch_success) echo "✅ Go $arg1 (으)로 전환됨 (현재 세션만)" ;;
                 switch_persisted) echo "✅ Go $arg1 (으)로 전환됨 (영구 적용, 새 터미널에 반영)" ;;
                 mirror_current) echo "현재 미러: $arg1" ;;
+                mirror_current_mark) echo "현재" ;;
+                mirror_list) echo "미러 목록（우선순위）:" ;;
+
                 mirror_usage) echo "사용법: gv-mirror [URL]  인수 없으면 현재 미러 표시" ;;
                 mirror_example) echo "예: gv-mirror https://mirrors.aliyun.com/golang" ;;
-                mirror_set) echo "✅ 미러가 $arg1 (으)로 설정됨" ;;
+                mirror_set) echo "✅ 미러 설정됨: $arg1" ;;
+                mirror_added) echo "✅ 미러 추가됨: $arg1" ;;
+                mirror_already_exists) echo "미러가 이미 존재함: $arg1" ;;
+
                 mirror_reload) echo "source $arg1 을(를) 실행하거나 터미널을 다시 시작하여 현재 세션에 적용하세요" ;;
                 arch_not_supported) echo "지원되지 않는 아키텍처: $arg1" ;;
                 install_banner) echo "=== gv (Go Version Manager) 설치 ===" ;;
@@ -357,6 +387,8 @@ msg() {
                 install_default_version_prompt) echo "기본 Go 버전[go.mod 가 없을 때, 기본값: $arg1]:" ;;
                 install_min_version_prompt) echo "최소 Go 버전[이하 자동 업그레이드, 기본값: $arg1]:" ;;
                 install_mirror_prompt) echo "다운로드 미러 URL[기본값: $arg1]:" ;;
+                install_mirror_fallback) echo "자동 폴백 미러" ;;
+
                 install_config_saved) echo "✅ 설정이 $arg1 에 저장됨" ;;
                 install_complete_banner) echo "✅ 설치 완료!" ;;
                 install_source_hint) echo "다음 명령으로 설정 적용:" ;;
@@ -394,7 +426,7 @@ msg() {
                 help_go_install) echo "Go 버전 설치（인수 없으면 온라인 선택）" ;;
                 help_go_use) echo "Go 버전 전환（-g 영구 적용）" ;;
                 help_go_list) echo "설치된 버전 목록" ;;
-                help_go_mirror) echo "다운로드 미러 확인/설정" ;;
+                help_go_mirror) echo "다운로드 미러 관리（set|add）" ;;
                 help_go_help) echo "도움말 표시" ;;
                 help_config) echo "설정 변수:" ;;
                 help_config_dir) echo "Go 설치 디렉터리" ;;
@@ -404,7 +436,7 @@ msg() {
                 help_tips) echo "팁:" ;;
                 help_tip1) echo "프로젝트에서 go 실행 시 go.mod 버전 자동 매칭" ;;
                 help_tip2) echo "gv-use -g <버전> 으로 기본값 설정, 새 터미널에 반영" ;;
-                help_tip3) echo "gv-mirror 로 미러 전환하여 다운로드 속도 개선" ;;
+                help_tip3) echo "gv 가 여러 미러를 자동 폴백, gv-mirror add 로 국내 미러 추가" ;;
                 uninstall_banner) echo "=== gv 제거 ===" ;;
                 uninstall_confirm) echo "gv 와 관리 중인 모든 Go 버전을 삭제합니다. 계속하시겠습니까？[Y/N]" ;;
                 uninstall_abort) echo "취소됨" ;;
@@ -447,9 +479,15 @@ msg() {
                 switch_success) echo "✅ Switched to Go $arg1 (current session only)" ;;
                 switch_persisted) echo "✅ Switched to Go $arg1 (persisted, new terminals inherit)" ;;
                 mirror_current) echo "Current mirror: $arg1" ;;
+                mirror_current_mark) echo "current" ;;
+                mirror_list) echo "Mirrors (priority order):" ;;
+
                 mirror_usage) echo "Usage: gv-mirror [URL]  no argument shows current mirror" ;;
                 mirror_example) echo "Example: gv-mirror https://mirrors.aliyun.com/golang" ;;
-                mirror_set) echo "✅ Mirror set to: $arg1" ;;
+                mirror_set) echo "✅ Mirror set: $arg1" ;;
+                mirror_added) echo "✅ Mirror added: $arg1" ;;
+                mirror_already_exists) echo "Mirror already exists: $arg1" ;;
+
                 mirror_reload) echo "Please run source $arg1 or restart terminal to apply in current session" ;;
                 arch_not_supported) echo "Unsupported architecture: $arg1" ;;
                 install_banner) echo "=== gv (Go Version Manager) Installation ===" ;;
@@ -458,6 +496,8 @@ msg() {
                 install_default_version_prompt) echo "Default Go version (when no go.mod, default: $arg1):" ;;
                 install_min_version_prompt) echo "Minimum Go version (auto-upgrade below this, default: $arg1):" ;;
                 install_mirror_prompt) echo "Download mirror URL (default: $arg1):" ;;
+                install_mirror_fallback) echo "Auto-fallback mirrors" ;;
+
                 install_config_saved) echo "✅ Configuration saved to $arg1" ;;
                 install_complete_banner) echo "✅ Installation complete!" ;;
                 install_source_note) echo "If installed via git clone, you may delete the cloned directory; curl installs leave no local files" ;;
@@ -495,7 +535,7 @@ msg() {
                 help_go_install) echo "Install a Go version (no args for online selection)" ;;
                 help_go_use) echo "Switch Go version (-g to persist)" ;;
                 help_go_list) echo "List installed versions" ;;
-                help_go_mirror) echo "Show/set download mirror" ;;
+                help_go_mirror) echo "Manage download mirrors (set|add)" ;;
                 help_go_help) echo "Show this help" ;;
                 help_config) echo "Configuration:" ;;
                 help_config_dir) echo "Go installation root" ;;
@@ -505,7 +545,7 @@ msg() {
                 help_tips) echo "Tips:" ;;
                 help_tip1) echo "Run 'go' in a project dir; version auto-matches go.mod" ;;
                 help_tip2) echo "gv-use -g <version> sets a default for new terminals" ;;
-                help_tip3) echo "Use gv-mirror to switch mirrors for faster downloads" ;;
+                help_tip3) echo "gv auto-falls-back across mirrors; use gv-mirror add for local mirrors" ;;
                 uninstall_banner) echo "=== gv Uninstall ===" ;;
                 uninstall_confirm) echo "This will remove gv and all managed Go versions. Continue? [Y/N]" ;;
                 uninstall_abort) echo "Aborted." ;;

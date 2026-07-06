@@ -13,7 +13,7 @@ export GO_CURRENT_VERSION_FILE="$HOME/.go_current_version"
 detect_region_mirror() {
     local lang="${LC_ALL:-$LANG}"
     case "$lang" in
-        zh_CN*) echo "https://golang.google.cn/dl" ;;
+        zh_CN*) echo "https://go.dev/dl" ;;
         *)      echo "https://go.dev/dl" ;;
     esac
 }
