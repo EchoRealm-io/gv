@@ -186,6 +186,10 @@ _go_install_version() {
     echo "  \$ rm -f $tmp_file"
     rm -f "$tmp_file"
     msg install_complete "$target_dir"
+    # Auto-switch to newly installed version (current session only)
+    export GOROOT="$target_dir"
+    export PATH="$GOROOT/bin:$(echo "$PATH" | tr ':' '\n' | grep -v "^$GO_VERSIONS_DIR/go[0-9]" | tr '\n' ':' | sed 's/:$//')"
+    echo "  💡 $(msg install_switched "$version")"
 }
 
 # ---------- Install a specific version ----------

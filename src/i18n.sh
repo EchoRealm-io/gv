@@ -37,6 +37,8 @@ msg() {
 
                 extract_sudo) echo "解压到 $arg1 (需要管理员权限)..." ;;
                 install_complete) echo "✅ 安装完成: $arg1" ;;
+                install_switched) echo "已切换到 Go $arg1（当前会话），用 gv-use -g 持久生效" ;;
+
                 go_list_header) echo "已安装的 Go 版本：" ;;
                 current_mark) echo "  <- 当前使用" ;;
                 switch_usage) echo "用法: gv-use [-g] <版本号>  例如: gv-use 1.21.5 或 gv-use -g 1.21.5（持久）" ;;
@@ -149,6 +151,8 @@ msg() {
 
                 extract_sudo) echo "解壓縮到 $arg1 (需要管理員權限)..." ;;
                 install_complete) echo "✅ 安裝完成: $arg1" ;;
+                install_switched) echo "已切換至 Go $arg1（目前工作階段），用 gv-use -g 持久生效" ;;
+
                 go_list_header) echo "已安裝的 Go 版本：" ;;
                 current_mark) echo "  <- 目前使用" ;;
                 switch_usage) echo "用法: gv-use [-g] <版本號>  例如: gv-use 1.21.5 或 gv-use -g 1.21.5（持久）" ;;
@@ -262,6 +266,8 @@ msg() {
 
                 extract_sudo) echo "$arg1 に展開中 (管理者権限が必要)..." ;;
                 install_complete) echo "✅ インストール完了: $arg1" ;;
+                install_switched) echo "Go $arg1 に切り替えました（現在のセッション）、gv-use -g で永続化" ;;
+
                 go_list_header) echo "インストール済みの Go バージョン：" ;;
                 current_mark) echo "  <- 現在使用中" ;;
                 switch_usage) echo "使用方法: gv-use [-g] <バージョン>  例: gv-use 1.21.5 または gv-use -g 1.21.5（永続）" ;;
@@ -374,6 +380,8 @@ msg() {
 
                 extract_sudo) echo "$arg1 에 압축 해제 중 (관리자 권한 필요)..." ;;
                 install_complete) echo "✅ 설치 완료: $arg1" ;;
+                install_switched) echo "Go $arg1 (으)로 전환됨（현재 세션），gv-use -g 로 영구 적용" ;;
+
                 go_list_header) echo "설치된 Go 버전:" ;;
                 current_mark) echo "  <- 현재 사용 중" ;;
                 switch_usage) echo "사용법: gv-use [-g] <버전>  예: gv-use 1.21.5 또는 gv-use -g 1.21.5（영구）" ;;
@@ -486,6 +494,8 @@ msg() {
 
                 extract_sudo) echo "Extracting to $arg1 (requires admin privilege)..." ;;
                 install_complete) echo "✅ Installation complete: $arg1" ;;
+                install_switched) echo "Switched to Go $arg1 (this session); use gv-use -g to persist" ;;
+
                 go_list_header) echo "Installed Go versions:" ;;
                 current_mark) echo "  <- currently used" ;;
                 switch_usage) echo "Usage: gv-use [-g] <version>  e.g. gv-use 1.21.5 or gv-use -g 1.21.5 (persist)" ;;
