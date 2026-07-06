@@ -5,13 +5,15 @@
 : "${GO_CURRENT_VERSION_FILE:=$HOME/.go_current_version}"
 : "${GO_VERSIONS_DIR:=/usr/local}"
 
-# Default mirror list (go.dev first for complete version history; region mirrors for speed)
+# Default download mirrors (region-based ordering; version list always uses go.dev first)
 : "${GO_DOWNLOAD_BASE_URL:=https://go.dev/dl}"
 # Always ensure fallback mirrors exist (covers old defaults.sh that only set go.dev)
 if [[ -z "$GO_DOWNLOAD_MIRRORS" ]] || [[ " $GO_DOWNLOAD_MIRRORS " != *" mirrors.aliyun.com "* ]]; then
-    _DEFAULT_MIRRORS="https://go.dev/dl https://mirrors.aliyun.com/golang https://golang.google.cn/dl"
+    case "${LC_ALL:-$LANG}" in
+        zh_CN*) _DEFAULT_MIRRORS="https://mirrors.aliyun.com/golang https://go.dev/dl https://golang.google.cn/dl" ;;
+        *)      _DEFAULT_MIRRORS="https://go.dev/dl https://mirrors.aliyun.com/golang https://golang.google.cn/dl" ;;
+    esac
     GO_DOWNLOAD_MIRRORS="${GO_DOWNLOAD_MIRRORS:+$GO_DOWNLOAD_MIRRORS }$_DEFAULT_MIRRORS"
-    # Deduplicate
     _unique=""
     for _m in $GO_DOWNLOAD_MIRRORS; do
         [[ " $_unique " != *" $_m "* ]] && _unique="$_unique $_m"
@@ -101,12 +103,12 @@ _persist_mirrors() {
     export GO_DOWNLOAD_BASE_URL="$(echo "$unique" | awk '{print $1}')"
 }
 
-# ---------- Fetch available Go versions (try all mirrors) ----------
+# ---------- Fetch available Go versions (go.dev first for full history) ----------
 _fetch_go_versions() {
-    local mirrors="${GO_DOWNLOAD_MIRRORS:-https://go.dev/dl}"
-    for mirror in $mirrors; do
+    # Always try go.dev HTML first (has complete release history; region mirrors may be incomplete)
+    local list_mirrors="https://go.dev/dl ${GO_DOWNLOAD_MIRRORS:-}"
+    for mirror in $list_mirrors; do
         local result
-        # Try HTML page first (has full version history, unlike JSON API which only returns latest 2)
         echo "  \$ curl -sSL ${mirror}/" >&2
         result=$(curl -sSL --connect-timeout 5 "${mirror}/" 2>/dev/null | \
             grep -oE 'go[0-9]+\.[0-9]+\.[0-9]+\.[a-z]' | \
@@ -116,7 +118,7 @@ _fetch_go_versions() {
             echo "  ← ${mirror} (HTML)" >&2
             return 0
         fi
-        # Fallback: try JSON API
+        # Fallback: JSON API
         echo "  \$ curl -sSL ${mirror}/?mode=json" >&2
         result=$(curl -sSL --connect-timeout 5 "${mirror}/?mode=json" 2>/dev/null | tr -d '[:space:]' | \
             grep -oE '"version":"go[0-9]+\.[0-9]+(\.[0-9]+)?","stable":true' | \
