@@ -47,9 +47,10 @@ curl -sSL https://raw.githubusercontent.com/EchoRealm-io/gv/main/install.sh | ba
 ## 卸载
 
 ```bash
-rm -rf ~/.go-version-manager ~/bin/go ~/.go_current_version
-# 然后从 ~/.bashrc 或 ~/.zshrc 中移除相关的 source 行
+curl -sSL https://raw.githubusercontent.com/EchoRealm-io/gv/main/uninstall.sh | bash
 ```
+
+卸载脚本会引导你完成 Go 版本删除、gv 文件清理和 shell 配置还原。
 
 ## 许可证
 

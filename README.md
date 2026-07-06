@@ -47,9 +47,10 @@ You can customize settings by editing `~/.go-version-manager/defaults.sh` or by 
 ## Uninstall
 
 ```bash
-rm -rf ~/.go-version-manager ~/bin/go ~/.go_current_version
-# Then remove the source lines from your ~/.bashrc or ~/.zshrc
+curl -sSL https://raw.githubusercontent.com/EchoRealm-io/gv/main/uninstall.sh | bash
 ```
+
+The uninstaller will guide you through removing Go versions, gv files, and shell config entries.
 
 ## License
 

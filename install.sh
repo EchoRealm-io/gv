@@ -306,6 +306,8 @@ echo ""
 msg install_next_step
 echo "  gv-install"
 echo ""
+msg install_source_note
+echo ""
 msg install_usage_hint
 echo "  gv-install [<version>]  $(msg help_go_install)"
 echo "  gv-use [-g] <version>   $(msg help_go_use)"

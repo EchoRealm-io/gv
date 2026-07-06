@@ -59,6 +59,9 @@ msg() {
                 install_restart_hint) echo "或重启终端" ;;
                 install_restart_ide) echo "请重启 VSCode/Trae 等 IDE 使 Go 扩展生效" ;;
                 install_next_step) echo "下一步: 运行以下命令安装 Go 版本" ;;
+                install_source_note) echo "如果克隆了 gv 仓库，现在可以删除源码目录" ;;
+
+
                 install_usage_hint) echo "可用命令:" ;;
                 existing_go_detected) echo "检测到现有的 Go 安装" ;;
                 existing_go_path) echo "路径" ;;
@@ -98,6 +101,20 @@ msg() {
                 help_tip1) echo "在项目目录直接运行 go 命令，自动匹配 go.mod 版本" ;;
                 help_tip2) echo "gv-use -g <版本> 设置默认版本，新终端自动生效" ;;
                 help_tip3) echo "使用 gv-mirror 切换镜像解决下载慢的问题" ;;
+                uninstall_banner) echo "=== gv 卸载 ===" ;;
+                uninstall_confirm) echo "将删除 gv 及所有管理的 Go 版本，确定继续？[Y/N]" ;;
+                uninstall_abort) echo "已取消" ;;
+                uninstall_found_versions) echo "发现已安装的 Go 版本:" ;;
+                uninstall_remove_prompt) echo "删除 $arg1 下所有 Go 版本？[Y/N]" ;;
+                uninstall_removing) echo "正在删除" ;;
+                uninstall_removed) echo "已删除" ;;
+                uninstall_cleaning_config) echo "正在清理 shell 配置..." ;;
+                uninstall_clean) echo "无需清理" ;;
+
+                uninstall_done) echo "gv 已卸载完毕" ;;
+                uninstall_cleanup_note) echo "如果克隆了 gv 仓库，现在可以删除源码目录" ;;
+
+
                 *) echo "Unknown message" ;;
             esac
             ;;
@@ -140,7 +157,11 @@ msg() {
                 install_source_hint) echo "執行以下命令使配置生效:" ;;
                 install_restart_hint) echo "或重新啟動終端機" ;;
                 install_restart_ide) echo "請重新啟動 VSCode/Trae 等 IDE 使 Go 擴充功能生效" ;;
+                install_source_note) echo "如果是透過 git clone 安裝的，可以刪除複製的 gv 目錄；curl 安裝則無殘留檔案" ;;
+
                 install_next_step) echo "下一步: 執行以下命令安裝 Go 版本" ;;
+
+
                 install_usage_hint) echo "可用命令:" ;;
                 existing_go_detected) echo "偵測到現有的 Go 安裝" ;;
                 existing_go_path) echo "路徑" ;;
@@ -180,6 +201,20 @@ msg() {
                 help_tip1) echo "在專案目錄直接執行 go 命令，自動匹配 go.mod 版本" ;;
                 help_tip2) echo "gv-use -g <版本> 設定預設版本，新終端機自動生效" ;;
                 help_tip3) echo "使用 gv-mirror 切換鏡像解決下載慢的問題" ;;
+                uninstall_banner) echo "=== gv 解除安裝 ===" ;;
+                uninstall_confirm) echo "將刪除 gv 及所有管理的 Go 版本，確定繼續？[Y/N]" ;;
+                uninstall_abort) echo "已取消" ;;
+                uninstall_found_versions) echo "發現已安裝的 Go 版本:" ;;
+                uninstall_remove_prompt) echo "刪除 $arg1 下所有 Go 版本？[Y/N]" ;;
+                uninstall_removing) echo "正在刪除" ;;
+                uninstall_removed) echo "已刪除" ;;
+                uninstall_cleaning_config) echo "正在清理 shell 設定..." ;;
+                uninstall_clean) echo "無需清理" ;;
+
+                uninstall_cleanup_note) echo "如果是透過 git clone 安裝的，可以刪除複製的 gv 目錄；curl 安裝則無殘留檔案" ;;
+
+                uninstall_done) echo "gv 已解除安裝完畢" ;;
+
                 *) echo "Unknown message" ;;
             esac
             ;;
@@ -221,8 +256,11 @@ msg() {
                 install_complete_banner) echo "✅ インストール完了!" ;;
                 install_source_hint) echo "以下のコマンドで設定を反映:" ;;
                 install_restart_hint) echo "またはターミナルを再起動" ;;
+                install_source_note) echo "git clone でインストールした場合、クローンした gv ディレクトリを削除できます；curl の場合は残留ファイルなし" ;;
+
                 install_restart_ide) echo "VSCode/Trae などの IDE を再起動して Go 拡張を反映してください" ;;
                 install_next_step) echo "次のステップ: 以下のコマンドで Go をインストール" ;;
+
                 install_usage_hint) echo "使用可能なコマンド:" ;;
                 existing_go_detected) echo "既存の Go インストールが検出されました" ;;
                 existing_go_path) echo "パス" ;;
@@ -262,6 +300,20 @@ msg() {
                 help_tip1) echo "プロジェクトディレクトリで go を実行すると go.mod に自動マッチ" ;;
                 help_tip2) echo "gv-use -g <version> でデフォルトを設定、新端末で自動反映" ;;
                 help_tip3) echo "gv-mirror でミラーを切り替えてダウンロードを高速化" ;;
+                uninstall_banner) echo "=== gv アンインストール ===" ;;
+                uninstall_confirm) echo "gv と管理下のすべての Go バージョンを削除します。続行しますか？[Y/N]" ;;
+                uninstall_abort) echo "キャンセルしました" ;;
+                uninstall_found_versions) echo "インストール済みの Go バージョン:" ;;
+                uninstall_remove_prompt) echo "$arg1 配下のすべての Go バージョンを削除しますか？[Y/N]" ;;
+                uninstall_removing) echo "削除中" ;;
+                uninstall_removed) echo "削除済み" ;;
+                uninstall_cleaning_config) echo "shell 設定をクリーンアップ中..." ;;
+                uninstall_clean) echo "クリーンアップ不要" ;;
+                uninstall_cleanup_note) echo "git clone でインストールした場合、クローンした gv ディレクトリを削除できます；curl の場合は残留ファイルなし" ;;
+
+
+                uninstall_done) echo "gv のアンインストールが完了しました" ;;
+
                 *) echo "Unknown message" ;;
             esac
             ;;
@@ -302,9 +354,12 @@ msg() {
                 install_config_saved) echo "✅ 설정이 $arg1 에 저장됨" ;;
                 install_complete_banner) echo "✅ 설치 완료!" ;;
                 install_source_hint) echo "다음 명령으로 설정 적용:" ;;
+                install_source_note) echo "git clone 으로 설치했다면 클론한 gv 디렉터리를 삭제해도 됩니다；curl 설치는 잔여 파일 없음" ;;
+
                 install_restart_hint) echo "또는 터미널 재시작" ;;
                 install_restart_ide) echo "VSCode/Trae 등 IDE 를 다시 시작하여 Go 확장을 적용하세요" ;;
                 install_next_step) echo "다음 단계: 아래 명령으로 Go 버전 설치" ;;
+
                 install_usage_hint) echo "사용 가능한 명령:" ;;
                 existing_go_detected) echo "기존 Go 설치가 감지되었습니다" ;;
                 existing_go_path) echo "경로" ;;
@@ -344,6 +399,20 @@ msg() {
                 help_tip1) echo "프로젝트에서 go 실행 시 go.mod 버전 자동 매칭" ;;
                 help_tip2) echo "gv-use -g <버전> 으로 기본값 설정, 새 터미널에 반영" ;;
                 help_tip3) echo "gv-mirror 로 미러 전환하여 다운로드 속도 개선" ;;
+                uninstall_banner) echo "=== gv 제거 ===" ;;
+                uninstall_confirm) echo "gv 와 관리 중인 모든 Go 버전을 삭제합니다. 계속하시겠습니까？[Y/N]" ;;
+                uninstall_abort) echo "취소됨" ;;
+                uninstall_found_versions) echo "설치된 Go 버전 발견:" ;;
+                uninstall_remove_prompt) echo "$arg1 아래의 모든 Go 버전을 삭제하시겠습니까？[Y/N]" ;;
+                uninstall_removing) echo "삭제 중" ;;
+                uninstall_removed) echo "삭제됨" ;;
+                uninstall_cleaning_config) echo "shell 설정 정리 중..." ;;
+                uninstall_cleanup_note) echo "git clone 으로 설치했다면 클론한 gv 디렉터리를 삭제해도 됩니다；curl 설치는 잔여 파일 없음" ;;
+
+                uninstall_clean) echo "정리 불필요" ;;
+
+                uninstall_done) echo "gv 제거 완료" ;;
+
                 *) echo "Unknown message" ;;
             esac
             ;;
@@ -383,10 +452,13 @@ msg() {
                 install_mirror_prompt) echo "Download mirror URL (default: $arg1):" ;;
                 install_config_saved) echo "✅ Configuration saved to $arg1" ;;
                 install_complete_banner) echo "✅ Installation complete!" ;;
+                install_source_note) echo "If installed via git clone, you may delete the cloned directory; curl installs leave no local files" ;;
+
                 install_source_hint) echo "Please run the following to apply changes:" ;;
                 install_restart_hint) echo "Or restart your terminal." ;;
                 install_restart_ide) echo "Please restart VSCode/Trae for the Go extension to pick up changes" ;;
                 install_next_step) echo "Next: run the command below to install a Go version" ;;
+
                 install_usage_hint) echo "You can now use:" ;;
                 existing_go_detected) echo "Existing Go installation detected" ;;
                 existing_go_path) echo "Path" ;;
@@ -426,6 +498,20 @@ msg() {
                 help_tip1) echo "Run 'go' in a project dir; version auto-matches go.mod" ;;
                 help_tip2) echo "gv-use -g <version> sets a default for new terminals" ;;
                 help_tip3) echo "Use gv-mirror to switch mirrors for faster downloads" ;;
+                uninstall_banner) echo "=== gv Uninstall ===" ;;
+                uninstall_confirm) echo "This will remove gv and all managed Go versions. Continue? [Y/N]" ;;
+                uninstall_abort) echo "Aborted." ;;
+                uninstall_found_versions) echo "Installed Go versions found:" ;;
+                uninstall_remove_prompt) echo "Remove all Go versions under $arg1? [Y/N]" ;;
+                uninstall_removing) echo "Removing" ;;
+                uninstall_removed) echo "removed" ;;
+                uninstall_cleanup_note) echo "If installed via git clone, you may delete the cloned directory; curl installs leave no local files" ;;
+
+                uninstall_cleaning_config) echo "Cleaning shell config..." ;;
+                uninstall_clean) echo "Already clean" ;;
+
+                uninstall_done) echo "gv has been uninstalled." ;;
+
                 *) echo "Unknown message" ;;
             esac
             ;;
