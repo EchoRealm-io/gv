@@ -3,6 +3,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux%20%7C%20Windows-blue)]()
 
+[![demo](https://asciinema.org/a/4kP4XMa2unh89A3O.svg)](https://asciinema.org/a/4kP4XMa2unh89A3O)
+
 **gv** (short for **G**o **V**ersion) is a lightweight, zero-dependency Go version manager for **Linux, macOS, and Windows (Git Bash/WSL)**.
 Automatically switches Go version based on `go.mod`, or manually via `gv-use` – ideal for multi-project, multi-version development.
 

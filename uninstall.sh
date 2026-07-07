@@ -110,7 +110,7 @@ for f in "${ALL_RC_FILES[@]}"; do
         # Remove gv-added lines
         for pattern in "${GV_PATTERNS[@]}"; do
             if grep -qF "$pattern" "$f" 2>/dev/null; then
-                echo "  ${YELLOW}$f:${NC} remove $(echo "$pattern" | head -c 60)..."
+                echo -e "  ${YELLOW}$f:${NC} remove $(echo "$pattern" | head -c 60)..."
                 if [[ "$OSTYPE" == "darwin"* ]]; then
                     sed -i '' "\|$pattern|d" "$f"
                 else
@@ -122,7 +122,7 @@ for f in "${ALL_RC_FILES[@]}"; do
         done
         # Remove lines commented out by gv from original config
         if grep -q '# (commented by gv)' "$f" 2>/dev/null; then
-            echo "  ${YELLOW}$f:${NC} remove gv-commented lines"
+            echo -e "  ${YELLOW}$f:${NC} remove gv-commented lines"
             if [[ "$OSTYPE" == "darwin"* ]]; then
                 sed -i '' '/# (commented by gv)/d' "$f"
             else

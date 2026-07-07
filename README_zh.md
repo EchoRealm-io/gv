@@ -3,6 +3,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux%20%7C%20Windows-blue)]()
 
+[![demo](https://asciinema.org/a/4kP4XMa2unh89A3O.svg)](https://asciinema.org/a/4kP4XMa2unh89A3O)
+
 **gv**（**G**o **V**ersion 的缩写）是一个轻量级、零依赖的 Go 版本管理器，支持 **Linux、macOS 和 Windows（Git Bash/WSL）**。
 可根据 `go.mod` 自动切换 Go 版本，也支持通过 `gv-use` 手动指定——多项目多版本开发的理想选择。
 
