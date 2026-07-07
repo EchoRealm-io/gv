@@ -65,8 +65,8 @@ gv-mirror() {
                 msg mirror_already_exists "$url"
                 return 0
             fi
-            _persist_mirrors "$GO_DOWNLOAD_MIRRORS $url"
-            GO_DOWNLOAD_MIRRORS="$GO_DOWNLOAD_MIRRORS $url"
+            # Keep current primary mirror unchanged (add appends, doesn't switch)
+            _persist_mirrors "$GO_DOWNLOAD_MIRRORS $url" "$GO_DOWNLOAD_BASE_URL"
             msg mirror_added "$url"
             msg mirror_reload
             ;;
@@ -82,6 +82,7 @@ gv-mirror() {
 
 _persist_mirrors() {
     local mirrors="$1"
+    local primary="${2:-}"
     local rc_file
     if [[ -n "$ZSH_VERSION" ]]; then rc_file="$HOME/.zshrc"
     elif [[ -n "$BASH_VERSION" ]]; then
@@ -96,13 +97,15 @@ _persist_mirrors() {
         [[ " $unique " != *" $m "* ]] && unique="$unique $m"
     done
     unique="${unique# }"
+    # Primary mirror: explicit param > first of unique (set puts new url first; add keeps current)
+    [[ -z "$primary" ]] && primary="$(echo "$unique" | awk '{print $1}')"
     sed -i.bak "/export GO_DOWNLOAD_MIRRORS=/d" "$rc_file" 2>/dev/null || true
     sed -i.bak "/export GO_DOWNLOAD_BASE_URL=/d" "$rc_file" 2>/dev/null || true
     rm -f "$rc_file.bak"
     echo "export GO_DOWNLOAD_MIRRORS=\"$unique\"" >> "$rc_file"
-    echo "export GO_DOWNLOAD_BASE_URL=\"$(echo "$unique" | awk '{print $1}')\"" >> "$rc_file"
+    echo "export GO_DOWNLOAD_BASE_URL=\"$primary\"" >> "$rc_file"
     export GO_DOWNLOAD_MIRRORS="$unique"
-    export GO_DOWNLOAD_BASE_URL="$(echo "$unique" | awk '{print $1}')"
+    export GO_DOWNLOAD_BASE_URL="$primary"
 }
 
 # ---------- Fetch available Go versions (region mirror first, fallback to go.dev for full history) ----------
