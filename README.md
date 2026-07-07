@@ -44,6 +44,27 @@ You can customize settings by editing `~/.go-version-manager/defaults.sh` or by 
 | `DEFAULT_GO_VERSION`   | `1.26.4`                                                | same                 | Fallback version when no `go.mod` |
 | `MIN_GO_VERSION`       | `1.21`                                                  | same                 | Auto‑upgrade versions below this  |
 
+## Comparison
+
+### vs other Go version managers
+
+|  | gv | g (voidint) | gvm | asdf |
+|---|---|---|---|---|
+| **Install** | `curl \| bash` | `go install` | `bash < <(curl)` | `git clone` |
+| **Zero deps** | ✅ bash only | ❌ needs Go | ✅ bash | ❌ git+curl |
+| **Auto-switch** | ✅ go.mod | ✅ .go-version | ✅ | ✅ |
+| **.go-version file** | ❌ | ✅ | ✅ | ✅ |
+| **i18n** | ✅ 5 languages | ❌ | ❌ | ❌ |
+| **Interactive pick** | ✅ online | ❌ | ❌ | ❌ |
+| **Multi-mirror** | ✅ auto-fallback | ❌ | ❌ | ❌ |
+| **SHA256 verify** | ❌ | ✅ | ❌ | ✅ |
+| **Old Go cleanup** | ✅ detect & remove | ❌ | ❌ | ❌ |
+| **Uninstaller** | ✅ interactive | ❌ | ❌ | ❌ |
+| **Windows native** | ❌ Git Bash/WSL | ✅ native | ❌ | ⚠️ WSL |
+| **Multi-language** | ❌ Go only | ❌ Go only | ❌ Go only | ✅ any |
+| **Startup speed** | ⚠️ source scripts | ✅ binary | ✅ shell func | ⚠️ shim |
+| **Persist version** | ✅ `gv-use -g` | ✅ | ✅ | ✅ |
+
 ## Uninstall
 
 ```bash

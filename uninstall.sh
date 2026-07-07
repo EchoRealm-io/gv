@@ -76,6 +76,7 @@ if [[ ${#versions[@]} -gt 0 ]]; then
     read -r do_remove < /dev/tty
     if [[ "$do_remove" =~ ^[Yy]$ ]]; then
         echo ""
+        sudo -v || { msg uninstall_abort; exit 1; }
         for v in "${versions[@]}"; do
             echo "$(msg uninstall_removing): $GO_VERSIONS_DIR/$v"
             sudo rm -rf "$GO_VERSIONS_DIR/$v" && echo -e "  ${GREEN}✅ $v $(msg uninstall_removed)${NC}" || echo -e "  ${RED}⚠️  $v failed${NC}"

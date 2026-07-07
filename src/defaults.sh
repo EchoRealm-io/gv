@@ -9,15 +9,7 @@ else
     export GO_VERSIONS_DIR="${GO_VERSIONS_DIR:-/usr/local}"
 fi
 export GO_CURRENT_VERSION_FILE="$HOME/.go_current_version"
-# Detect region-appropriate default mirror
-detect_region_mirror() {
-    local lang="${LC_ALL:-$LANG}"
-    case "$lang" in
-        zh_CN*) echo "https://go.dev/dl" ;;
-        *)      echo "https://go.dev/dl" ;;
-    esac
-}
-export GO_DOWNLOAD_BASE_URL="${GO_DOWNLOAD_BASE_URL:-$(detect_region_mirror)}"
+export GO_DOWNLOAD_BASE_URL="${GO_DOWNLOAD_BASE_URL:-https://go.dev/dl}"
 export DEFAULT_GO_VERSION="${DEFAULT_GO_VERSION:-1.26.4}"
 export MIN_GO_VERSION="${MIN_GO_VERSION:-1.21}"
 

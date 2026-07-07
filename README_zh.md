@@ -44,6 +44,27 @@ curl -sSL https://raw.githubusercontent.com/EchoRealm-io/gv/main/install.sh | ba
 | `DEFAULT_GO_VERSION`   | `1.26.4`                                               | 同上                 | 无 `go.mod` 时的默认版本 |
 | `MIN_GO_VERSION`       | `1.21`                                                 | 同上                 | 低于此版本自动升级       |
 
+## 对比
+
+### 与其他 Go 版本管理器对比
+
+|  | gv | g (voidint) | gvm | asdf |
+|---|---|---|---|---|
+| **安装** | `curl \| bash` | `go install` | `bash < <(curl)` | `git clone` |
+| **零依赖** | ✅ 仅需 bash | ❌ 需 Go | ✅ bash | ❌ git+curl |
+| **自动切换** | ✅ go.mod | ✅ .go-version | ✅ | ✅ |
+| **.go-version 文件** | ❌ | ✅ | ✅ | ✅ |
+| **多语言** | ✅ 5 种 | ❌ | ❌ | ❌ |
+| **在线选版** | ✅ 交互式 | ❌ | ❌ | ❌ |
+| **多镜像** | ✅ 自动回退 | ❌ | ❌ | ❌ |
+| **SHA256 校验** | ❌ | ✅ | ❌ | ✅ |
+| **旧 Go 清理** | ✅ 检测/删除 | ❌ | ❌ | ❌ |
+| **卸载工具** | ✅ 交互式 | ❌ | ❌ | ❌ |
+| **Windows 原生** | ❌ Git Bash/WSL | ✅ 原生 | ❌ | ⚠️ WSL |
+| **多语言管理** | ❌ 仅 Go | ❌ 仅 Go | ❌ 仅 Go | ✅ 任意 |
+| **启动速度** | ⚠️ source 脚本 | ✅ 二进制 | ✅ shell func | ⚠️ shim |
+| **持久版本** | ✅ `gv-use -g` | ✅ | ✅ | ✅ |
+
 ## 卸载
 
 ```bash

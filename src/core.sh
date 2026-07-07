@@ -61,7 +61,7 @@ gv-mirror() {
                 return 1
             fi
             # Don't add duplicates
-            if echo "$GO_DOWNLOAD_MIRRORS" | grep -qF "$url"; then
+            if [[ " $GO_DOWNLOAD_MIRRORS " == *" $url "* ]]; then
                 msg mirror_already_exists "$url"
                 return 0
             fi
@@ -98,6 +98,7 @@ _persist_mirrors() {
     unique="${unique# }"
     sed -i.bak "/export GO_DOWNLOAD_MIRRORS=/d" "$rc_file" 2>/dev/null || true
     sed -i.bak "/export GO_DOWNLOAD_BASE_URL=/d" "$rc_file" 2>/dev/null || true
+    rm -f "$rc_file.bak"
     echo "export GO_DOWNLOAD_MIRRORS=\"$unique\"" >> "$rc_file"
     echo "export GO_DOWNLOAD_BASE_URL=\"$(echo "$unique" | awk '{print $1}')\"" >> "$rc_file"
     export GO_DOWNLOAD_MIRRORS="$unique"
